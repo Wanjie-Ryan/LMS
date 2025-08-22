@@ -22,6 +22,25 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 - when borrowing, stock decreases by 1 vice versa when you return a book.
 - System keeps history of who borrowed what and when.
 
+**Relationships Btn Entities**
+1. User to Borrow
+# 1 to Many
+- one user can borrow many books over time.
+- Each borrow record belongs to only one user.
+
+2. Book to Borrow
+# 1 to many
+- One book can appear in many borrow records (different users borrowing at different times)
+- Each borrow record belongs to one book.
+
+3. User to Book (many to many) (indirectly via borrow)
+- user can borrow many books
+- A book can be borrowed by many users.
+- This r/shp will be modeled by borrows table.
+
+**ERD REPRESENTATION**
+![alt text](image.png)
+
 
 
 
