@@ -50,3 +50,19 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 
 **ERD REPRESENTATION**
 ![alt text](image.png)
+
+**Difference Between log.default().Println() and fmt.Println()**
+
+# fmt
+
+- fmt belongs to the **fmt** package.
+- it prints text to the console.
+- has no timestamps, no logs, just raw text.
+- example --> Connected to database
+
+# log.default()
+
+- Belongs to the log package
+- log.Default returns the default logger instance in GO.
+- it includes timestamps and supports logging with more structured info.
+- example --> 2025/08/21 10:30:00 Connected to database
