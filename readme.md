@@ -66,3 +66,26 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 - log.Default returns the default logger instance in GO.
 - it includes timestamps and supports logging with more structured info.
 - example --> 2025/08/21 10:30:00 Connected to database
+
+# e.Logger.Fatal
+
+- this is Echo's logger instance.
+- More advanced than Go's standard log, because it supports structured logging
+- .Fatal logs the message at Fatal level, and after logging it terminates the program.
+- outcome is sth like this::-> {"time":"2025-08-21T10:55:02Z","level":"FATAL","msg":"Error loading .env file","error":"open .env: no such file or directory"}
+
+**fmt.Sprintf**
+
+- formats a string and returns it
+
+# Running a Go project
+
+- go run main.go
+
+# Difference btn **appAddress := fmt.Sprintf("localhost:%s", port)** and **appAddress :=fmt.Sprintf(":%s", port)**
+
+- The first one explicitly binds the server to localhost only.
+- The server is only accessible at htt://localhost:8080, but not via other n/w interfaces like LAN IP 127.0.0.1 or 0.0.0.0
+
+- The second one is a shorthand for all available interfaces (like 0.0.0.0:8080) for IPV4 and [::]:8080 for IPV6
+- The server is reachable not only at localhost:8080, but also from other devices on your n/w if firewall allows.
