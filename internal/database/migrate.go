@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 
-	err = db.AutoMigrate(&models.User{}, &models.Book{})
+	err = db.AutoMigrate(&models.User{}, &models.Book{}, &models.Borrow{})
 
 	if err != nil {
 		panic(err)
