@@ -9,10 +9,11 @@ const (
 	StatusReturned Status = "returned"
 )
 
+// this borrow record ties a specific user to a specific book at a given time
 type Borrow struct {
 	BaseModel
-	UserID     uint       `gorm:"not null; index" json:"user_id"` // FK to users
-	BookID     uint       `gorm:"not null; index" json:"book_id"` // FK to books
+	UserID     uint       `gorm:"not null; index" json:"user_id"` // FK to users, enforces WHO borrowed a book.
+	BookID     uint       `gorm:"not null; index" json:"book_id"` // FK to books, enforces WHICH book was borrowed.
 	BorrowDate time.Time  `gorm:"not null" json:"borrow_date"`
 	DueDate    time.Time  `gorm:"not null" json:"due_date"`
 	ReturnDate *time.Time `json:"return_date"` // nullable, since the book may not be returned
