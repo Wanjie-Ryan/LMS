@@ -89,3 +89,20 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 
 - The second one is a shorthand for all available interfaces (like 0.0.0.0:8080) for IPV4 and [::]:8080 for IPV6
 - The server is reachable not only at localhost:8080, but also from other devices on your n/w if firewall allows.
+
+- In go fields must start with an uppercase letter to be exported (visible to GORM and JSON)
+
+# INDEXING
+
+- without and index, DB would do a full table scan.
+- starts at row 1 and checks every email until it finds rwanjie.
+- Thats O(n) time to check upto 1m records.
+
+**With an Index**
+
+- The DB creates a B-Tree (balanced search tree)
+- In this tree - each node contains a range of sorted email values. Branch 1 contains emails from A TO D, Branch 2 contains emails from E TO H like that...
+- The branches let the DB jump directly to the right section.
+  **Analogy**
+- Think of it like a dictionary - if you're looking for Rwanjie, you don't start from "Aaron"
+  **A B-Tree works like looking for a word in a dictionary**
