@@ -45,6 +45,7 @@ func main() {
 	}
 
 	fmt.Println("app instantiation", app)
+	app.Routes(handler)
 
 	// fmt.Println("Connected to the database", db)
 
