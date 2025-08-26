@@ -11,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ValidateBodyRequest(c echo.Context, payload interface{}) []*common.ValidationError {
+func (h *Handler) ValidateBodyRequest(c echo.Context, payload interface{}) []*common.ValidationError {
 
 	var validate *validator.Validate
 	validate = validator.New(validator.WithRequiredStructEnabled())

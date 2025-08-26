@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/Wanjie-Ryan/LMS/cmd/api/handlers"
 )
 
@@ -12,7 +10,7 @@ func (app *Application) Routes(handler handlers.Handler) {
 
 	// authroutes
 	authRoutes := apiGroup.Group("/auth")
-	fmt.Println("authRoutes", authRoutes)
-	// authRoutes.POST("/register", handler.RegiseterHandler)
+	// fmt.Println("authRoutes", authRoutes)
+	authRoutes.POST("/register", handler.RegisterUserHandler)
 
 }

@@ -106,3 +106,14 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
   **Analogy**
 - Think of it like a dictionary - if you're looking for Rwanjie, you don't start from "Aaron"
   **A B-Tree works like looking for a word in a dictionary**
+
+# Maps
+
+- A map in go is just a key-value store
+  **map[KeyType]ValueType**
+- map[string]string -> keys are strings, values are strings
+  **Example**
+  return c.Json(http.statusBadRequest, map[string]string{
+  "error":"Invalid request"
+  })
+- key is string, value is string
