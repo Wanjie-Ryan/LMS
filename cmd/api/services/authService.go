@@ -49,3 +49,26 @@ func (a *AuthService) RegisterService(payload *requests.RegisterRequest) (*model
 	return saveUser, nil
 
 }
+
+// function to handle Login Logic
+func (a *AuthService) LoginService(email string, password string) (*models.User, error) {
+	return nil, nil
+
+}
+
+// function to Get user by email
+func (a *AuthService) GetUserByMail(email string) (*models.User, error) {
+
+	var user models.User
+	result := a.DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+			// by doing nil, nil, the caller distinguishes btn the error from the db, and when user actually doesn't exist
+		}
+
+		return nil, errors.New("error getting user")
+	}
+
+	return &user, nil
+}
