@@ -27,8 +27,7 @@ func (h *Handler) RegisterUserHandler(c echo.Context) error {
 		return common.SendFailedValidationResponse(c, validationErr)
 	}
 
-	authService := services.NewAuthService(h.DB)
-	fmt.Println("authService", authService)
+	authService := services.NewAuthService(h.DB, h.Redis)
 
 	// check if email exists already
 	user, err := authService.GetUserByMail(payload.Email)

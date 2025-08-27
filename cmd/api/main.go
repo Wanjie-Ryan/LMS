@@ -36,7 +36,10 @@ func main() {
 		return c.String(http.StatusOK, "Server is up and running")
 
 	})
-	handler := handlers.Handler{DB: db}
+
+	redisClient := common.ConnectRedis()
+
+	handler := handlers.Handler{DB: db, Redis: redisClient}
 
 	app := &Application{
 		logger:  e.Logger,

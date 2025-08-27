@@ -13,7 +13,7 @@ import (
 // context is like a controller for redis commands
 // context.Background gives us a base context - meaning there's no timeout or cancellation
 // when you call commands later, eg. rdb.Ping(ctx), redis knows which context is managing the request.
-var ctx = context.Background()
+var Ctx = context.Background()
 
 func ConnectRedis() *redis.Client {
 
@@ -27,7 +27,7 @@ func ConnectRedis() *redis.Client {
 	})
 
 	// testing if the connection works
-	_, err := rdb.Ping(ctx).Result()
+	_, err := rdb.Ping(Ctx).Result()
 	if err != nil {
 		panic(err)
 	}
