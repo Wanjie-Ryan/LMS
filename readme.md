@@ -117,3 +117,7 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
   "error":"Invalid request"
   })
 - key is string, value is string
+
+# Installing Redis
+
+**go get github.com/redis/go-redis/v9**
