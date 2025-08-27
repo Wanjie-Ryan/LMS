@@ -121,3 +121,5 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 # Installing Redis
 
 **go get github.com/redis/go-redis/v9**
+
+- Data in redis is tored in key value pairs
