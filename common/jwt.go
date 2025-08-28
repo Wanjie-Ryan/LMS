@@ -11,13 +11,15 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// jwt claim is data stored inside a jwt token
 type CustomJWTClaims struct {
-	ID uint `json:"id"`
-	jwt.RegisteredClaims
+	ID                   uint `json:"id"`
+	jwt.RegisteredClaims      // comes from the jwt library and already includes fields like IssuedAt, ExpiresAt, issuer/subject (optional)
 }
 
 func GenerateJWT(user models.User) (*string, *string, error) {
 
+	// creating a CustomJwtClaims struct. Also, jwt.RegisteredClaims is a struct from the jwt library that can accept various data
 	userClaims := CustomJWTClaims{
 		ID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -26,6 +28,7 @@ func GenerateJWT(user models.User) (*string, *string, error) {
 		},
 	}
 
+	// creates a new JWT object
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims)
 
 	signedAccessToken, err := accessToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
@@ -38,7 +41,7 @@ func GenerateJWT(user models.User) (*string, *string, error) {
 		ID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 48)),
 		},
 	})
 
@@ -51,8 +54,10 @@ func GenerateJWT(user models.User) (*string, *string, error) {
 
 }
 
+// verifies a JWT string and extracts the claims
 func ParseJWT(signedAccessToken string) (*CustomJWTClaims, error) {
 
+	// the signedAccessToken is the first argument, followed by an empty calims struct that will be populated, the 3rd args is a function that returns the secret key.
 	parsedJwtAccessToken, err := jwt.ParseWithClaims(signedAccessToken, &CustomJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
