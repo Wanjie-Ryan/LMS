@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/Wanjie-Ryan/LMS/cmd/api/requests"
 	"github.com/Wanjie-Ryan/LMS/common"
@@ -73,12 +74,6 @@ func (a *AuthService) RegisterService(payload *requests.RegisterRequest) (*model
 
 }
 
-// function to handle Login Logic
-func (a *AuthService) LoginService(email string, password string) (*models.User, error) {
-	return nil, nil
-
-}
-
 // function to Get user by email
 func (a *AuthService) GetUserByMail(email string) (*models.User, error) {
 
@@ -94,4 +89,51 @@ func (a *AuthService) GetUserByMail(email string) (*models.User, error) {
 	}
 
 	return &user, nil
+}
+
+// function for profile Lookup
+func (a *AuthService) ProfileLookupService(email string) (*models.User, error) {
+
+	// build a redis key eg. user_email:ryan@gmail.com
+	redisKey := fmt.Sprintf("user_email:%s", email)
+
+	// getting user from redis
+	userData, err := a.Redis.Get(common.Ctx, redisKey).Result()
+	if err == nil {
+		var cachedUser models.User
+		if err := json.Unmarshal([]byte(userData), &cachedUser); err == nil {
+			log.Default().Println("user fetched from redis successfully")
+			return &cachedUser, nil
+		}
+		// if unmarshalling failed, log the error and continue to DB
+		log.Default().Println("error unmarshalling user from redis", err)
+	} else if err != redis.Nil {
+		log.Default().Println("error getting user from redis", err)
+	}
+
+	// if redis error or cache miss, check DB
+	var user models.User
+	result := a.DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, errors.New("error getting user")
+	}
+
+	user.Password = ""
+	// cache the result and store in redis for next time
+	userJson, err := json.Marshal(user)
+	if err == nil {
+		err = a.Redis.Set(common.Ctx, redisKey, userJson, 0).Err()
+		if err != nil {
+			log.Default().Println("error saving user to redis", err)
+		} else {
+			log.Default().Println("user saved to redis successfully")
+		}
+
+	}
+
+	return &user, nil
+
 }

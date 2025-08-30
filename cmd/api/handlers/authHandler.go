@@ -100,3 +100,9 @@ func (h *Handler) LoginHandler(c echo.Context) error {
 
 	return common.SendSuccessResponse(c, "User Logged in sucessfully", map[string]interface{}{"accessToken": accessToken, "refreshToken": refreshToken, "user": user})
 }
+
+// handler to Get user profile
+func (h *Handler) ProfileHandler(c echo.Context) error {
+
+	return nil
+}

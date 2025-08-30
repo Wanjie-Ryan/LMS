@@ -6,15 +6,17 @@ import (
 	"os"
 
 	"github.com/Wanjie-Ryan/LMS/cmd/api/handlers"
+	"github.com/Wanjie-Ryan/LMS/cmd/api/middleware"
 	"github.com/Wanjie-Ryan/LMS/common"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 )
 
 type Application struct {
-	logger  echo.Logger
-	server  *echo.Echo
-	handler handlers.Handler
+	logger         echo.Logger
+	server         *echo.Echo
+	handler        handlers.Handler
+	AuthMiddleware middleware.AppMiddleware
 }
 
 func main() {
@@ -40,11 +42,13 @@ func main() {
 	redisClient := common.ConnectRedis()
 
 	handler := handlers.Handler{DB: db, Redis: redisClient}
+	authMiddleware := middleware.AppMiddleware{DB: db}
 
 	app := &Application{
-		logger:  e.Logger,
-		server:  e,
-		handler: handler,
+		logger:         e.Logger,
+		server:         e,
+		handler:        handler,
+		AuthMiddleware: authMiddleware,
 	}
 
 	fmt.Println("app instantiation", app)
