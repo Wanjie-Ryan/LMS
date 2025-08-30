@@ -12,5 +12,6 @@ func (app *Application) Routes(handler handlers.Handler) {
 	authRoutes := apiGroup.Group("/auth")
 	// fmt.Println("authRoutes", authRoutes)
 	authRoutes.POST("/register", handler.RegisterUserHandler)
+	authRoutes.POST("/login", handler.LoginHandler)
 
 }

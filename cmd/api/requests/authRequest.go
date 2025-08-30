@@ -17,3 +17,9 @@ type RegisterRequest struct {
 	//oneof means that the field must be one of the values in the list
 	// in my case, if a role is provided, it must be either admin or member, if nothing is provided, it defaults to member from the model
 }
+
+// LOGIN DTO
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=4"`
+}
