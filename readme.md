@@ -138,3 +138,11 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 - -g points to the entry file containing the top-level annotations (main.go)
 - This generates a docs/ package
 - Everytime you change annotations or models, **swag init** again
+
+
+# CI/CD Workflow
+**Continuous Integration**
+- Automating the process of testing and integrating code into a shared repo.
+- Everytime you push to Github, a CI pipeline can:
+1. Run unit tests
+2. 
