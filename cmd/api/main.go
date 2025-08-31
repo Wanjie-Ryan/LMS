@@ -1,3 +1,22 @@
+// Package main Library Management System API
+//
+// @contact.name   Wanjie-Ryan
+// @contact.url    https://github.com/Wanjie-Ryan
+// @contact.email  ryanwanjie1@gmail.com
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+//
+// @title           LMS API
+// @version         1.0
+// @description     Library Management System API with JWT auth, Redis cache, and MySQL.
+// @BasePath        /api/v1
+// @schemes         http
+// @host            localhost:8080
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter the token with the `Bearer ` prefix, e.g. "Bearer {token}"
+
 package main
 
 import (
@@ -10,6 +29,8 @@ import (
 	"github.com/Wanjie-Ryan/LMS/common"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	_ "github.com/Wanjie-Ryan/LMS/docs"
 )
 
 type Application struct {
@@ -34,11 +55,14 @@ func main() {
 		e.Logger.Fatal("Error while connecting to the database", err)
 	}
 
+	// health check endpoint
 	e.GET("/health", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Server is up and running")
 
 	})
 
+	// swagger docs endpoint
+	e.GET("/docs/*", echoSwagger.WrapHandler)
 	redisClient := common.ConnectRedis()
 
 	handler := handlers.Handler{DB: db, Redis: redisClient}

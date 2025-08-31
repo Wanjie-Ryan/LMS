@@ -13,6 +13,18 @@ import (
 )
 
 // Handler to register a new user
+// RegisterUserHandler godoc
+// @Summary      Register user
+// @Description  Creates a new user account
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        payload  body      requests.RegisterRequest  true  "Register payload"
+// @Success      201  {object}  common.JsonSuccessResponse
+// @Failure      400  {object}  common.JsonErrorResponse  "Invalid payload / user exists"
+// @Failure 422 {object} common.JsonFailedValidationResponse
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /auth/register [post]
 func (h *Handler) RegisterUserHandler(c echo.Context) error {
 
 	payload := new(requests.RegisterRequest)
@@ -52,10 +64,23 @@ func (h *Handler) RegisterUserHandler(c echo.Context) error {
 
 	}
 
-	return common.SendSuccessResponse(c, "User registered successfully", savedUser)
+	return common.SendCreatedResponse(c, "User registered successfully", savedUser)
 }
 
 // Handler to Login a user
+// LoginHandler godoc
+// @Summary      Login
+// @Description  Logs in a user and returns access & refresh tokens
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        payload  body      requests.LoginRequest  true  "Login payload"
+// @Success      200  {object}  common.JsonSuccessResponse  "accessToken, refreshToken, user"
+// @Failure      400  {object} common.JsonErrorResponse  "Invalid credentials"
+// @Failure      404  {object}  common.JsonErrorResponse  "User not found"
+// @Failure 422 {object} common.JsonFailedValidationResponse
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /auth/login [post]
 func (h *Handler) LoginHandler(c echo.Context) error {
 
 	payload := new(requests.LoginRequest)
@@ -103,6 +128,17 @@ func (h *Handler) LoginHandler(c echo.Context) error {
 }
 
 // handler to Get user profile
+// ProfileHandler godoc
+// @Summary      Get profile
+// @Description  Returns the current user's profile
+// @Tags         Profile
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {object}  common.JsonSuccessResponse  "user"
+// @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
+// @Failure      404  {object}  common.JsonErrorResponse  "User not found"
+// @Failure      500  {object} common.JsonErrorResponse  "Server error"
+// @Router       /profile/lookup [get]
 func (h *Handler) ProfileHandler(c echo.Context) error {
 
 	// get the context of the current logged in user

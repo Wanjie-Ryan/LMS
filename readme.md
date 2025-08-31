@@ -123,3 +123,18 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 **go get github.com/redis/go-redis/v9**
 
 - Data in redis is tored in key value pairs
+
+# Installing Swagger for documentation
+
+**go install github.com/swaggo/swag/cmd/swag@latest**
+
+- the above is installed only once per machine
+
+**go get github.com/swaggo/echo-swagger@latest**
+**go get github.com/swaggo/swag@latest**
+
+- From your module root where go.mod lives, run:
+  **swag init -g cmd/api/main.go**
+- -g points to the entry file containing the top-level annotations (main.go)
+- This generates a docs/ package
+- Everytime you change annotations or models, **swag init** again
