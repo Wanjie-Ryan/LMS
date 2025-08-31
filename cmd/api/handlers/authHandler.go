@@ -8,6 +8,7 @@ import (
 	"github.com/Wanjie-Ryan/LMS/cmd/api/requests"
 	"github.com/Wanjie-Ryan/LMS/cmd/api/services"
 	"github.com/Wanjie-Ryan/LMS/common"
+	"github.com/Wanjie-Ryan/LMS/internal/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -104,5 +105,26 @@ func (h *Handler) LoginHandler(c echo.Context) error {
 // handler to Get user profile
 func (h *Handler) ProfileHandler(c echo.Context) error {
 
-	return nil
+	// get the context of the current logged in user
+	user, ok := c.Get("user").(*models.User)
+	if !ok {
+		return common.SendUnauthorizedResponse(c, "Not authorized")
+	}
+
+	authService := services.NewAuthService(h.DB, h.Redis)
+
+	// getting the user by the id
+	user, err := authService.ProfileLookupService(user.ID)
+	if err != nil {
+		log.Default().Println("error getting user", err.Error())
+		if err.Error() == "error getting user" {
+			return common.SendInternalServerError(c, "error getting user")
+		}
+	}
+
+	if user == nil {
+		return common.SendNotFoundResponse(c, "User does not exist")
+	}
+
+	return common.SendSuccessResponse(c, "User profile", user)
 }

@@ -16,6 +16,6 @@ func (app *Application) Routes(handler handlers.Handler) {
 
 	// profile Look up route, will be in the same handler as register and login though.
 	profileRoute := apiGroup.Group("/profile", app.AuthMiddleware.AuthMiddleware)
-	profileRoute.GET("/profile", handler.ProfileHandler)
+	profileRoute.GET("/lookup", handler.ProfileHandler)
 
 }

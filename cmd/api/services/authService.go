@@ -62,6 +62,7 @@ func (a *AuthService) RegisterService(payload *requests.RegisterRequest) (*model
 		// "user:%d" is a placeholder for the user ID eg. user:1
 		// 0 tells redis that the stored data to never expire
 		err = a.Redis.Set(common.Ctx, fmt.Sprintf("user:%d", saveUser.ID), userJson, 0).Err()
+		// err = a.Redis.Set(common.Ctx, fmt.Sprintf("user_email:%s", saveUser.Email), userJson, 0).Err()
 		if err != nil {
 			fmt.Println("error saving user to redis", err)
 		} else {
@@ -92,15 +93,21 @@ func (a *AuthService) GetUserByMail(email string) (*models.User, error) {
 }
 
 // function for profile Lookup
-func (a *AuthService) ProfileLookupService(email string) (*models.User, error) {
+
+// ** to note ** instead of doing an email lookup, i'll change to id
+func (a *AuthService) ProfileLookupService(id uint) (*models.User, error) {
 
 	// build a redis key eg. user_email:ryan@gmail.com
-	redisKey := fmt.Sprintf("user_email:%s", email)
+	// user_email is a namespace/prefix to organize the type of data.
+	// now there are two ways to fetch the same user
+	// by ID user:3, by email user_email:ryan@gmail.com
+	redisKey := fmt.Sprintf("user:%d", id)
 
 	// getting user from redis
 	userData, err := a.Redis.Get(common.Ctx, redisKey).Result()
 	if err == nil {
 		var cachedUser models.User
+		// takes the json string from redis and unmarshals it into a struct of models.user
 		if err := json.Unmarshal([]byte(userData), &cachedUser); err == nil {
 			log.Default().Println("user fetched from redis successfully")
 			return &cachedUser, nil
@@ -108,12 +115,13 @@ func (a *AuthService) ProfileLookupService(email string) (*models.User, error) {
 		// if unmarshalling failed, log the error and continue to DB
 		log.Default().Println("error unmarshalling user from redis", err)
 	} else if err != redis.Nil {
+		// redis.Nil is a special error that redis returns when a key is not found
 		log.Default().Println("error getting user from redis", err)
 	}
 
 	// if redis error or cache miss, check DB
 	var user models.User
-	result := a.DB.Where("email = ?", email).First(&user)
+	result := a.DB.Where("id = ?", id).First(&user)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
