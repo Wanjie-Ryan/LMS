@@ -29,6 +29,12 @@ func SendSuccessResponse(c echo.Context, message string, data interface{}) error
 	return c.JSON(http.StatusOK, JsonSuccessResponse{Success: true, Message: message, Data: data})
 }
 
+// send a response if data is created successfully
+func SendCreatedResponse(c echo.Context, message string, data interface{}) error {
+
+	return c.JSON(http.StatusCreated, JsonSuccessResponse{Success: true, Message: message, Data: data})
+}
+
 // sending a response if validation failed
 func SendFailedValidationResponse(c echo.Context, errors []*ValidationError) error {
 
