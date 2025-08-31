@@ -123,3 +123,12 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 **go get github.com/redis/go-redis/v9**
 
 - Data in redis is tored in key value pairs
+
+# Installing Swagger for documentation
+
+**go install github.com/swaggo/swag/cmd/swag@latest**
+
+- the above is installed only once per machine
+
+**go get github.com/swaggo/echo-swagger@latest**
+**go get github.com/swaggo/swag@latest**
