@@ -211,6 +211,9 @@ run: go test ./...
 - **jobs** Defines the job called **build-test** to run on an Ubuntu runner.
 - **steps**
 
+- name - workflow name
+- inside the jobs there is also a name, thats the jobs name
+
 1. **actions/checkout** - Gets your repo code.
 2. **setup-go** - Installs Go in the runner
 3. **go mod tidy** - cleans up go.mod and go.sum
