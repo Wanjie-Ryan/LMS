@@ -220,3 +220,13 @@ run: go test ./...
 7. **gofmt** - Ensures all Go files are properly formatted.
 
 - If go test or go build fails, the workflow will stop and mark the build as failed.
+
+**gofmt**
+
+- Go's built in formatter -- its the Prettier of Go.
+  **gofmt -l .**
+- shows unformatted files
+  **gofmt -w .**
+- Auto formats everything
+- -w: write the formatted output back to the files.
+- . format the current directory recursively.
