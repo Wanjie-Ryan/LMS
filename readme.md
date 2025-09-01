@@ -145,4 +145,26 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 - Automating the process of testing and integrating code into a shared repo.
 - Everytime you push to Github, a CI pipeline can:
 1. Run unit tests
-2. 
+2. Check fromatting/linting
+3. Build your Go project
+4. Alter you if sth breaks
+
+**The goal is to catch bugs early, ensure every commit is production ready**
+
+# Continuous Deliver/Deployment
+- This is about automating what happens after CI passes.
+1. Deploy to a testing/staging server
+2. Trigger an automated deployment to prod.
+3. Build and push a docker image
+4. Notify slack or discord
+5. Tag releases
+
+**Move from a working commit, to a delivered product with manual effort**
+
+# Github Actions
+- Github  Actions is Github's native CI/CD tool. It uses workflows (writen in YAML) to define automated jobs that trigger events like:
+1. push. 2. pull requests 3. release 4. manual dispatch
+
+- workflows are defined in 
+**.github/workflows/name.yml**
+
