@@ -138,3 +138,98 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 - -g points to the entry file containing the top-level annotations (main.go)
 - This generates a docs/ package
 - Everytime you change annotations or models, **swag init** again
+
+# CI/CD Workflow
+
+**Continuous Integration**
+
+- Automating the process of testing and integrating code into a shared repo.
+- Everytime you push to Github, a CI pipeline can:
+
+1. Run unit tests
+2. Check fromatting/linting
+3. Build your Go project
+4. Alter you if sth breaks
+
+**The goal is to catch bugs early, ensure every commit is production ready**
+
+# Continuous Deliver/Deployment
+
+- This is about automating what happens after CI passes.
+
+1. Deploy to a testing/staging server
+2. Trigger an automated deployment to prod.
+3. Build and push a docker image
+4. Notify slack or discord
+5. Tag releases
+
+**Move from a working commit, to a delivered product with manual effort**
+
+# Github Actions
+
+- Github Actions is Github's native CI/CD tool. It uses workflows (writen in YAML) to define automated jobs that trigger events like:
+
+1. push. 2. pull requests 3. release 4. manual dispatch
+
+- workflows are defined in
+  **.github/workflows/name.yml**
+
+# Workflows
+
+- A workflow is a YAML file, that contains one or more jobs.
+- Each job contains steps(run commands, actions, scripts)
+- All triggered by a specific event. (on:)
+
+- workflow is like a recipe for Github actions
+
+1. it defines when it run/triggers
+2. What env to use (eg. ubuntu-latest)
+3. What steps to take (eg. checkout code, build, test)
+
+- Everything from CI to CD is in this file.
+
+# Example
+
+---
+
+on: [push]
+
+jobs:
+build:
+runs-on: ubuntu-latest
+steps: - uses: actions/checkout@v3 - name: Set up Go
+uses: actions/setup-go@v4
+with:
+go-version: '1.21' - name: Run Tests
+run: go test ./...
+
+---
+
+# Example (in the .yml file for reference)
+
+- **on** Triggers the workflow when you push to main or dev or even when you open a PR targeting main or dev.
+- **jobs** Defines the job called **build-test** to run on an Ubuntu runner.
+- **steps**
+
+- name - workflow name
+- inside the jobs there is also a name, thats the jobs name
+
+1. **actions/checkout** - Gets your repo code.
+2. **setup-go** - Installs Go in the runner
+3. **go mod tidy** - cleans up go.mod and go.sum
+4. **go-build** - checks for compilation issues.
+5. **go-test** - runs your unit/integration tests.
+6. **go-vet** - finds suspicious code.
+7. **gofmt** - Ensures all Go files are properly formatted.
+
+- If go test or go build fails, the workflow will stop and mark the build as failed.
+
+**gofmt**
+
+- Go's built in formatter -- its the Prettier of Go.
+  **gofmt -l .**
+- shows unformatted files
+  **gofmt -w .**
+- Auto formats everything
+- -w: write the formatted output back to the files.
+- . format the current directory recursively.

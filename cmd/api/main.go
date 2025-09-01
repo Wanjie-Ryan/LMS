@@ -27,10 +27,10 @@ import (
 	"github.com/Wanjie-Ryan/LMS/cmd/api/handlers"
 	"github.com/Wanjie-Ryan/LMS/cmd/api/middleware"
 	"github.com/Wanjie-Ryan/LMS/common"
+	_ "github.com/Wanjie-Ryan/LMS/docs"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
-	_ "github.com/Wanjie-Ryan/LMS/docs"
 )
 
 type Application struct {
