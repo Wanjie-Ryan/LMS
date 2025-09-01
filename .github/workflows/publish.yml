@@ -1,0 +1,51 @@
+# .github/workflows/go-ci.yml
+name: Go CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+  push:
+    branches:
+      - master
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Go
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod" # Change if you're using a different version
+
+      # Step 3: Print Go version
+      - name: Display Go version
+        run: go version
+
+      # Step 4: Tidy up modules (safe to use even if not using modules heavily)
+      - name: Go mod tidy
+        run: go mod tidy
+
+      # Step 5: Build the application (checks for syntax/compilation issues)
+      - name: Build project
+        run: go build ./...
+
+      # Step 6: Run tests (unit tests etc.)
+      - name: Run tests
+        run: go test ./...
+
+      # Step 7: Vet for common mistakes
+      - name: Go vet
+        run: go vet ./...
+
+      # Step 8: Check formatting (optional)
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)"
