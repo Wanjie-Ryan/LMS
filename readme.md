@@ -233,3 +233,42 @@ run: go test ./...
 - Auto formats everything
 - -w: write the formatted output back to the files.
 - . format the current directory recursively.
+
+# Docker and Deploying Image to hub via pipeline
+
+**Docker**
+
+- is used for packaging your application into a portable container
+- the container can then run on any machine be it local, cloud.
+
+**Docker images**
+
+- more of a recipe/blueprint.
+- contains a **read-only** bundle of everything your app needs to run. (binaries, envs, code)
+
+**Docker container**
+
+- running instance of an image.
+- its like launching a VM from a snapshot - its isolated, run fast, and can be created/destroyed instantly.
+- this is a live, executable version of the image.
+
+**Docker Hub**
+
+- app store for docker images
+- a registry where you push and pull images, like github but for containers.
+
+**Dockerfile**
+
+- set of instructions that tells docker how to build an image for your application.
+
+- Docker desktop is a program on your local machine that lets you build, run and manage containers.
+- Docker hub is a cloud registry like Github for images, where you store, share or pull container images.
+
+**Build an image, then run it to get a container**
+
+# Docker Flow
+
+- **Code -> Docker file -> docker build -> Image -> docker run -> container**
+  ![alt text](image-1.png)
+
+- **image-> docker push -> docker hub**
