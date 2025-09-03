@@ -272,3 +272,80 @@ run: go test ./...
   ![alt text](image-1.png)
 
 - **image-> docker push -> docker hub**
+
+# Building a docker file
+
+**docker build -t lms-api .**
+
+- -t is the tag name of the image
+- . is the current directory, find the docker file in this current directory.
+
+**docker images**
+
+- view built image
+
+**docker run -p 8080:8080 lms-api**
+
+- run the container
+
+**docker push lms-api**
+
+- pushes this image to docker hub
+
+**Loading .env into the image**
+
+- docker run -p 8080:8080 --env-file .env lms-api
+- docker run --env-file .env -p 8080:80 lms-api
+
+**Option 2 of loading env**
+
+- COPY .env .env
+
+**host.docker.internal**
+
+- injected into the .env where you defined services that run locally, helps docker communicate with local services outside the container environment.
+
+**Docker compose**
+
+- tool that lets you define and manage multi-container docker apps in a single YAML file
+
+**Dockerfile describes how to build a **single** container(image + dependencies) while docker compose decribes how to run one or more containers together, and with settings like:: port mappings, volumes, envs, dependencies(DBs, redis, etc)**
+
+- docker compose shines when you want to run multiple containers at one go, docker file only runs one at a time.
+
+- docker compose allows you to:
+
+1. define all your containers in one file.
+2. run everything with one command.
+3. rebuild easily with flags.
+4. share dev environments with others using a single file.
+
+- the run command is **docker compose up --build**
+- cleaning up any existing containers **docker compose down**
+- check if containers are running **docker compose ps**
+- "3307:3306"
+- 3307 is the host port, and 3306 is the container port
+
+# Start your development environment
+
+docker compose up --build
+
+# Run in background
+
+docker compose up -d --build
+
+# Check logs
+
+docker compose logs -f app
+
+# Stop everything
+
+docker compose down
+
+# Restart just your app after code changes
+
+docker compose restart app
+
+# Or rebuild and restart
+
+docker compose up --build app

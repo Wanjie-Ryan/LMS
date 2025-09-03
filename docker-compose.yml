@@ -1,0 +1,47 @@
+#Yaml syntax version
+version: "3.9"
+
+# this is where you list all your containers. Each service is a container with a name and config.
+services:
+  # service 1 is the Go App container
+  # app is the name you give to the container
+  # build.context is the path to the Dockerfile, which the . means it lies in the current folder.
+  # maps port 8080 on local machine to port 8080 on the container
+  # that means if your app inside the docker listens on port 8080, you can access it from http://localhost:8080
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      # - .env.docker
+      - .env
+      # tells docker compose, don't start this app container until mysql and redis containers are running
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  # pulls the offical MySQL 8 image from docker hub
+  # exposes port 3306, so you can still connect to it via MySQL Workbench at localhost:3306
+  mysql:
+    image: mysql:8
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234567890
+      MYSQL_DATABASE: lms
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p1234567890"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  #pulls redis 7 from docker hub, and exposes port 6379
+  redis:
+    image: redis:7
+    ports:
+      - "6380:6379"
