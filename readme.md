@@ -458,3 +458,40 @@ docker compose restart app
 **DELETE a key**
 
 - DEL user:1
+
+# Pushing image to docker hub
+
+**docker build -f dockerfile -t ryanwanjie266/lms:latest .**
+
+- -f dockerfile tells Docker to use your file named dockerfile (not Dockerfile).
+
+- -t ryanwanjie266/lms:latest tags the image with your Docker Hub repo and the latest tag.
+
+**Login to docker hub via cli**
+
+- docker login
+- enter hub username - ryanwanjie266
+- enter pwd or access token
+
+**push the image to hub**
+
+- docker push ryanwanjie266/lms:latest
+
+**Why push images to docker hub**
+
+1. Portability & collaboration.
+
+- anyone can pull and run your app instantly, with zero code sharing
+
+2. Consistency
+
+- Every environamtn runs the exact same container
+
+3. CI/CD Automation
+
+- CI/CD can push a new image every time you merge to main/master.
+- Your servers cam auto pull the latest, making rolling out updates easy.
+
+4. Deployment
+
+- Popular platforms can pull and deploy from hub, so you don't have to upload huge images every time.
