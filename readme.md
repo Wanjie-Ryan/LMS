@@ -233,3 +233,265 @@ run: go test ./...
 - Auto formats everything
 - -w: write the formatted output back to the files.
 - . format the current directory recursively.
+
+# Docker and Deploying Image to hub via pipeline
+
+**Docker**
+
+- is used for packaging your application into a portable container
+- the container can then run on any machine be it local, cloud.
+
+**Docker images**
+
+- more of a recipe/blueprint.
+- contains a **read-only** bundle of everything your app needs to run. (binaries, envs, code)
+
+**Docker container**
+
+- running instance of an image.
+- its like launching a VM from a snapshot - its isolated, run fast, and can be created/destroyed instantly.
+- this is a live, executable version of the image.
+
+**Docker Hub**
+
+- app store for docker images
+- a registry where you push and pull images, like github but for containers.
+
+**Dockerfile**
+
+- set of instructions that tells docker how to build an image for your application.
+
+- Docker desktop is a program on your local machine that lets you build, run and manage containers.
+- Docker hub is a cloud registry like Github for images, where you store, share or pull container images.
+
+**Build an image, then run it to get a container**
+
+# Docker Flow
+
+- **Code -> Docker file -> docker build -> Image -> docker run -> container**
+  ![alt text](image-1.png)
+
+- **image-> docker push -> docker hub**
+
+# Building a docker file
+
+**docker build -t lms-api .**
+
+- -t is the tag name of the image
+- . is the current directory, find the docker file in this current directory.
+
+**docker images**
+
+- view built image
+
+**docker run -p 8080:8080 lms-api**
+
+- run the container
+
+**docker push lms-api**
+
+- pushes this image to docker hub
+
+**Loading .env into the image**
+
+- docker run -p 8080:8080 --env-file .env lms-api
+- docker run --env-file .env -p 8080:80 lms-api
+
+**Option 2 of loading env**
+
+- COPY .env .env
+
+**host.docker.internal**
+
+- injected into the .env where you defined services that run locally, helps docker communicate with local services outside the container environment.
+
+**Docker compose**
+
+- tool that lets you define and manage multi-container docker apps in a single YAML file
+
+**Dockerfile describes how to build a **single** container(image + dependencies) while docker compose decribes how to run one or more containers together, and with settings like:: port mappings, volumes, envs, dependencies(DBs, redis, etc)**
+
+- docker compose shines when you want to run multiple containers at one go, docker file only runs one at a time.
+
+- docker compose allows you to:
+
+1. define all your containers in one file.
+2. run everything with one command.
+3. rebuild easily with flags.
+4. share dev environments with others using a single file.
+
+- the run command is **docker compose up --build**
+- cleaning up any existing containers **docker compose down**
+- check if containers are running **docker compose ps**
+- "3307:3306"
+- 3307 is the host port, and 3306 is the container port
+
+# Start your development environment
+
+- the command below starts every service
+  docker compose up --build
+
+# Run in background
+
+docker compose up -d --build
+
+# Check logs
+
+docker compose logs -f app
+
+# Stop everything
+
+- stops and removes the containers, networks, you'll need to run docker compose up again to restart
+  docker compose down
+
+**stop a single service**
+
+- docker compose stop app
+- to restart it
+- docker compose start app
+
+# Restart just your app after code changes
+
+docker compose restart app
+
+# Or rebuild and restart
+
+- this commands starts only the app service, redis and MYSQL won't restart unless they're dependencies of app.
+- docker compose up --build app
+
+**starting docker**
+
+- sudo systemctl start docker
+
+**stopping docker**
+
+- sudo systemctl stop docker
+
+**Restart docker**
+
+- sudo systemctl restart docker
+
+**enable docker on boot(auto start)**
+
+- sudo systemctl enable docker
+
+**disable docker from starting on boot**
+
+- sudo systemctl disable docker
+
+**check docker status**
+
+- sudo systemctl status docker
+
+  **verify its running**
+
+- docker ps
+
+**Access MySql and Redis**
+
+- mysql -h 127.0.0.1 -P 3307 -u root -p
+- docker exec -it {{container-name}} mysql -u root -p
+
+- redis-cli -h 127.0.0.1 -p 6380
+- docker exec -it redis-1 redis-cli
+
+# FULL DOCKER FLOW COMMANDS
+
+1. start fresh (build everything, every service)
+
+- docker compose up --build -d
+- -- build forces rebuilding images if needed.
+- -d - detached mode (runs in background)
+
+2. Check containers
+
+- docker ps
+- docker compose ps
+
+3. Rebuild only the app (when you change your Go code)
+
+- docker compose up - restart all containers if you did not touch the dockerfile or GO source code
+- docker compose up --build -d app
+
+4. Restart a single service (no rebuild)
+
+- docker compose restart app
+- docker compose stop app
+- dcoker compose start app
+
+5. Stop services
+
+- docker compose stop app
+
+- stop everything in your stack
+- docker compose down
+
+6. Logs(debugging)
+
+- view all logs
+- docker compose logs -f
+
+- logs for only the app
+- docker compose logs -f app
+
+7. remove everything
+
+- if you want totally clean environment
+- docker compose down -v
+
+- docker compose run --rm app go run ./internal/database/migrate.go
+
+- quit; - exit from mysql terminal
+
+# Redis commands
+
+**List all keys**
+
+- KEYS \*
+- SCAN 0
+
+**Get key value**
+
+- GET user:1
+- HGETALL user:1
+
+**DELETE a key**
+
+- DEL user:1
+
+# Pushing image to docker hub
+
+**docker build -f dockerfile -t ryanwanjie266/lms:latest .**
+
+- -f dockerfile tells Docker to use your file named dockerfile (not Dockerfile).
+
+- -t ryanwanjie266/lms:latest tags the image with your Docker Hub repo and the latest tag.
+
+**Login to docker hub via cli**
+
+- docker login
+- enter hub username - ryanwanjie266
+- enter pwd or access token
+
+**push the image to hub**
+
+- docker push ryanwanjie266/lms:latest
+
+**Why push images to docker hub**
+
+1. Portability & collaboration.
+
+- anyone can pull and run your app instantly, with zero code sharing
+
+2. Consistency
+
+- Every environamtn runs the exact same container
+
+3. CI/CD Automation
+
+- CI/CD can push a new image every time you merge to main/master.
+- Your servers cam auto pull the latest, making rolling out updates easy.
+
+4. Deployment
+
+- Popular platforms can pull and deploy from hub, so you don't have to upload huge images every time.

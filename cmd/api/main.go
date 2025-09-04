@@ -21,16 +21,17 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"os"
-
 	"github.com/Wanjie-Ryan/LMS/cmd/api/handlers"
 	"github.com/Wanjie-Ryan/LMS/cmd/api/middleware"
 	"github.com/Wanjie-Ryan/LMS/common"
 	_ "github.com/Wanjie-Ryan/LMS/docs"
+	"github.com/Wanjie-Ryan/LMS/internal/database"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
+	"log"
+	"net/http"
+	"os"
 )
 
 type Application struct {
@@ -53,6 +54,9 @@ func main() {
 	db, err := common.ConnectionDB()
 	if err != nil {
 		e.Logger.Fatal("Error while connecting to the database", err)
+	}
+	if err := database.Migrate(db); err != nil {
+		log.Fatalf("Migration failed: %v", err)
 	}
 
 	// health check endpoint

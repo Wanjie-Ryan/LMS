@@ -1,14 +1,10 @@
-# .github/workflows/go-ci.yml
-name: Go CI
+name: Go CI & Docker Publish
 
 on:
   pull_request:
-    branches:
-      - master
-
+    branches: [master]
   push:
-    branches:
-      - master
+    branches: [master]
 
 jobs:
   build-test:
@@ -16,36 +12,71 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
+      # 1. Checkout your code from GitHub
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Go
+      # 2. Set up Go using version from go.mod
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: "go.mod" # Change if you're using a different version
+          go-version-file: "go.mod"
 
-      # Step 3: Print Go version
+      # 3. Show Go version (just for logs)
       - name: Display Go version
         run: go version
 
-      # Step 4: Tidy up modules (safe to use even if not using modules heavily)
+      # 4. Make sure your go.mod and dependencies are tidy
       - name: Go mod tidy
         run: go mod tidy
 
-      # Step 5: Build the application (checks for syntax/compilation issues)
+      # 5. Build your Go app (tests that code compiles)
       - name: Build project
         run: go build ./...
 
-      # Step 6: Run tests (unit tests etc.)
+      # 6. Run all your Go tests
       - name: Run tests
         run: go test ./...
 
-      # Step 7: Vet for common mistakes
+      # 7. Vet code for suspicious constructs
       - name: Go vet
         run: go vet ./...
 
-      # Step 8: Check formatting (optional)
+      # 8. Check formatting (optional, but good habit)
       - name: Check formatting
         run: test -z "$(gofmt -l .)"
+
+        # docker-publish job, runs only on pushes to master(not PRs, thanks to the if: condition)
+        # waits for tests to pass (using needs: build-test)
+  docker-publish:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    # This job runs AFTER build-test succeeds (prevents pushing broken images)
+    # Only push Docker images on real pushes (not PRs)
+    needs: build-test
+    if: github.event_name == 'push'
+    steps:
+      # 1. Checkout your code again (fresh environment)
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Docker Buildx (required for multi-platform builds & modern Docker)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 3. Log in to Docker Hub using the secrets you set
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 4. Build and push your Docker image to Docker Hub
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: . # Use current directory as context
+          file: ./dockerfile # Use your dockerfile (not default Dockerfile)
+          push: true # Actually push the image to Docker Hub
+          tags: ryanwanjie266/lms:latest # Image name/tag on Docker Hub
+
