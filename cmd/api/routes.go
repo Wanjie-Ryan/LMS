@@ -18,4 +18,8 @@ func (app *Application) Routes(handler handlers.Handler) {
 	profileRoute := apiGroup.Group("/profile", app.AuthMiddleware.AuthMiddleware)
 	profileRoute.GET("/lookup", handler.ProfileHandler)
 
+	// books routes
+	booksRoutes := apiGroup.Group("/books", app.AuthMiddleware.AuthMiddleware)
+	booksRoutes.POST("/create", handler.CreateBookHandler)
+
 }
