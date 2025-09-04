@@ -30,7 +30,7 @@ WORKDIR /app
 # Copy the built binary from the builder stage
 COPY --from=builder /app/lms-server .
 # Copy the .env file into the container
-COPY --from=builder /app/.env .env
+# COPY --from=builder /app/.env .env
 
 # Expose the port your app runs on
 EXPOSE 8080
