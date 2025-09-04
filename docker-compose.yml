@@ -12,6 +12,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile
+    image: ryanwanjie266/lms:latest
     ports:
       - "8080:8080"
     env_file:
