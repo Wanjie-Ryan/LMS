@@ -18,6 +18,8 @@ services:
     env_file:
       # - .env.docker
       - .env
+    volumes:
+      - .env:/app/.env
       # tells docker compose, don't start this app container until mysql and redis containers are running
     depends_on:
       mysql:
