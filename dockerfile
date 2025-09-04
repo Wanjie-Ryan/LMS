@@ -8,6 +8,7 @@ WORKDIR /app
 
 # Copy go.mod and go.sum first (for caching)
 COPY go.mod go.sum ./
+# download all go dependencies into the image
 RUN go mod download
 
 # Copy the rest of the source code

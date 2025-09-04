@@ -23,9 +23,10 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
+	"log"
 	"github.com/Wanjie-Ryan/LMS/cmd/api/handlers"
 	"github.com/Wanjie-Ryan/LMS/cmd/api/middleware"
+	 "github.com/Wanjie-Ryan/LMS/internal/database"
 	"github.com/Wanjie-Ryan/LMS/common"
 	_ "github.com/Wanjie-Ryan/LMS/docs"
 	"github.com/joho/godotenv"
@@ -54,6 +55,9 @@ func main() {
 	if err != nil {
 		e.Logger.Fatal("Error while connecting to the database", err)
 	}
+	 if err := database.Migrate(db); err != nil {
+        log.Fatalf("Migration failed: %v", err)
+    }
 
 	// health check endpoint
 	e.GET("/health", func(c echo.Context) error {

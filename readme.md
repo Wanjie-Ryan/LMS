@@ -328,7 +328,8 @@ run: go test ./...
 
 # Start your development environment
 
-docker compose up --build
+- the command below starts every service
+  docker compose up --build
 
 # Run in background
 
@@ -340,7 +341,14 @@ docker compose logs -f app
 
 # Stop everything
 
-docker compose down
+- stops and removes the containers, networks, you'll need to run docker compose up again to restart
+  docker compose down
+
+**stop a single service**
+
+- docker compose stop app
+- to restart it
+- docker compose start app
 
 # Restart just your app after code changes
 
@@ -348,4 +356,105 @@ docker compose restart app
 
 # Or rebuild and restart
 
-docker compose up --build app
+- this commands starts only the app service, redis and MYSQL won't restart unless they're dependencies of app.
+- docker compose up --build app
+
+**starting docker**
+
+- sudo systemctl start docker
+
+**stopping docker**
+
+- sudo systemctl stop docker
+
+**Restart docker**
+
+- sudo systemctl restart docker
+
+**enable docker on boot(auto start)**
+
+- sudo systemctl enable docker
+
+**disable docker from starting on boot**
+
+- sudo systemctl disable docker
+
+**check docker status**
+
+- sudo systemctl status docker
+
+  **verify its running**
+
+- docker ps
+
+**Access MySql and Redis**
+
+- mysql -h 127.0.0.1 -P 3307 -u root -p
+- docker exec -it {{container-name}} mysql -u root -p
+
+- redis-cli -h 127.0.0.1 -p 6380
+- docker exec -it redis-1 redis-cli
+
+# FULL DOCKER FLOW COMMANDS
+
+1. start fresh (build everything, every service)
+
+- docker compose up --build -d
+- -- build forces rebuilding images if needed.
+- -d - detached mode (runs in background)
+
+2. Check containers
+
+- docker ps
+- docker compose ps
+
+3. Rebuild only the app (when you change your Go code)
+
+- docker compose up - restart all containers if you did not touch the dockerfile or GO source code
+- docker compose up --build -d app
+
+4. Restart a single service (no rebuild)
+
+- docker compose restart app
+- docker compose stop app
+- dcoker compose start app
+
+5. Stop services
+
+- docker compose stop app
+
+- stop everything in your stack
+- docker compose down
+
+6. Logs(debugging)
+
+- view all logs
+- docker compose logs -f
+
+- logs for only the app
+- docker compose logs -f app
+
+7. remove everything
+
+- if you want totally clean environment
+- docker compose down -v
+
+- docker compose run --rm app go run ./internal/database/migrate.go
+
+- quit; - exit from mysql terminal
+
+# Redis commands
+
+**List all keys**
+
+- KEYS \*
+- SCAN 0
+
+**Get key value**
+
+- GET user:1
+- HGETALL user:1
+
+**DELETE a key**
+
+- DEL user:1

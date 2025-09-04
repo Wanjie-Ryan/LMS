@@ -1,5 +1,5 @@
 #Yaml syntax version
-version: "3.9"
+# version: "3.9"
 
 # this is where you list all your containers. Each service is a container with a name and config.
 services:
