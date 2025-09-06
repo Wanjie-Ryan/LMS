@@ -53,6 +53,10 @@ func SendBadRequestResponse(c echo.Context, message string) error {
 	return SendErrorResponse(c, http.StatusBadRequest, message)
 }
 
+func SendForbiddenResponse(c echo.Context, message string) error {
+	return SendErrorResponse(c, http.StatusForbidden, message)
+}
+
 func SendNotFoundResponse(c echo.Context, message string) error {
 	return SendErrorResponse(c, http.StatusNotFound, message)
 }
