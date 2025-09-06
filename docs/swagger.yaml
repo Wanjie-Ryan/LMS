@@ -35,6 +35,21 @@ definitions:
       key:
         type: string
     type: object
+  requests.BookRequest:
+    properties:
+      author:
+        type: string
+      description:
+        type: string
+      stock:
+        type: integer
+      title:
+        type: string
+    required:
+    - author
+    - stock
+    - title
+    type: object
   requests.LoginRequest:
     properties:
       email:
@@ -162,6 +177,48 @@ paths:
       summary: Register user
       tags:
       - Auth
+  /books/create:
+    post:
+      consumes:
+      - application/json
+      description: Allows admin users to create a new book entry.
+      parameters:
+      - description: Book payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/requests.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "400":
+          description: Invalid payload
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "401":
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/common.JsonFailedValidationResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      summary: Create book
+      tags:
+      - Books
   /profile/lookup:
     get:
       description: Returns the current user's profile

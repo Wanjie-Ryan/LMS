@@ -138,6 +138,7 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 - -g points to the entry file containing the top-level annotations (main.go)
 - This generates a docs/ package
 - Everytime you change annotations or models, **swag init** again
+**swag init --generalInfo cmd/api/main.go --output docs**
 
 # CI/CD Workflow
 

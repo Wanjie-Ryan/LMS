@@ -25,13 +25,14 @@ func NewBookService(db *gorm.DB, redisClient *redis.Client) BooksService {
 
 // function to create books, and persist them in redis for caching
 
-func (b *BooksService) CreateBooksService(payload *requests.BookRequest) (*models.Book, error) {
+func (b *BooksService) CreateBooksService(payload *requests.BookRequest, userId uint) (*models.Book, error) {
 
 	savedBook := &models.Book{
 		Title:       payload.Title,
 		Author:      payload.Author,
 		Description: payload.Description,
 		Stock:       payload.Stock,
+		UserID:      userId,
 	}
 
 	// saving the data to DB
