@@ -61,3 +61,18 @@ func (h *Handler) CreateBookHandler(c echo.Context) error {
 
 	return common.SendCreatedResponse(c, "Book created successfully", book)
 }
+
+// Handler to get paginated books
+// GetPaginatedBooksHandler godoc
+// @Summary      Get paginated books
+// @Description  Returns a paginated list of books
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Param        page  query     string  false  "Page number"  default(1)
+// @Param        limit  query     string  false  "Limit"  default(10)
+// @Success      200  {object}  common.JsonSuccessResponse
+// @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /books [get]
