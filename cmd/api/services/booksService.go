@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -62,7 +63,7 @@ func (b *BooksService) CreateBooksService(payload *requests.BookRequest, userId 
 
 // get all paginated books
 
-func (b *BookService) GetPaginatedBooksService(r *http.Request) (*common.Pagination, error) {
+func (b *BooksService) GetPaginatedBooksService(r *http.Request) (*common.Pagination, error) {
 
 	q := r.URL.Query()
 	page := q.Get("page")
@@ -73,6 +74,7 @@ func (b *BookService) GetPaginatedBooksService(r *http.Request) (*common.Paginat
 	if err == nil && val != "" {
 		var paginated common.Pagination
 		if jsonErr := json.Unmarshal([]byte(val), &paginated); jsonErr == nil {
+			log.Default().Println("paginated books fetched from redis successfully")
 			return &paginated, nil
 		}
 	}
@@ -90,9 +92,10 @@ func (b *BookService) GetPaginatedBooksService(r *http.Request) (*common.Paginat
 
 	booksJson, err := json.Marshal(pagination)
 	if err != nil {
-		fmt.Println("error marshalling book struct to json", err)
+		fmt.Println("error marshalling book struct to json in redis", err)
 	} else {
-		err = b.Redis.Set(common.Ctx, cacheKey, booksJson, 0).Err()
+		// err = b.Redis.Set(common.Ctx, cacheKey, booksJson, 0).Err()
+		err = b.Redis.Set(common.Ctx, cacheKey, booksJson, time.Minute*2).Err()
 	}
 
 	return pagination, nil

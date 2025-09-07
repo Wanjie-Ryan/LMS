@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/labstack/echo/v4"
 
@@ -18,6 +19,7 @@ import (
 // @Tags         Books
 // @Accept       json
 // @Produce      json
+// @Security     BearerAuth
 // @Param        payload  body      requests.BookRequest  true  "Book payload"
 // @Success      201  {object}  common.JsonSuccessResponse
 // @Failure      400  {object}  common.JsonErrorResponse  "Invalid payload"
@@ -69,10 +71,35 @@ func (h *Handler) CreateBookHandler(c echo.Context) error {
 // @Tags         Books
 // @Accept       json
 // @Produce      json
+// @Security     BearerAuth
 // @Param        page  query     string  false  "Page number"  default(1)
 // @Param        limit  query     string  false  "Limit"  default(10)
 // @Success      200  {object}  common.JsonSuccessResponse
 // @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
 // @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
 // @Failure      500  {object}  common.JsonErrorResponse  "Server error"
-// @Router       /books [get]
+// @Router       /books/getAll [get]
+func (h *Handler) GetPaginatedBooksHandler(c echo.Context) error {
+
+	user, ok := c.Get("user").(*models.User)
+	log.Default().Println("admin email is checking", user.Email)
+	if !ok {
+		return common.SendUnauthorizedResponse(c, "Not authorized")
+	}
+
+	if user.Role != "admin" {
+		return common.SendForbiddenResponse(c, "Not allowed to perform this action")
+	}
+
+	booksService := services.NewBookService(h.DB, h.Redis)
+
+	books, err := booksService.GetPaginatedBooksService(c.Request())
+	if err != nil {
+		if err.Error() == "error getting books" {
+			return common.SendInternalServerError(c, "Error getting books")
+		}
+	}
+
+	return common.SendSuccessResponse(c, "Books retrieved successfully", books)
+
+}

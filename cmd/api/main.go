@@ -9,6 +9,12 @@
 // @title           LMS API
 // @version         1.0
 // @description     Library Management System API with JWT auth, Redis cache, and MySQL.
+// @securityDefinitions.oauth2 BearerAuth
+// @in header
+// @name Authorization
+// @type http
+// @scheme bearer
+// @bearerFormat JWT
 // @BasePath        /api/v1
 // @schemes         http
 // @host            localhost:8080
@@ -21,17 +27,19 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
+
 	"github.com/Wanjie-Ryan/LMS/cmd/api/handlers"
 	"github.com/Wanjie-Ryan/LMS/cmd/api/middleware"
 	"github.com/Wanjie-Ryan/LMS/common"
 	_ "github.com/Wanjie-Ryan/LMS/docs"
 	"github.com/Wanjie-Ryan/LMS/internal/database"
-	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
-	echoSwagger "github.com/swaggo/echo-swagger"
-	"log"
-	"net/http"
-	"os"
 )
 
 type Application struct {
