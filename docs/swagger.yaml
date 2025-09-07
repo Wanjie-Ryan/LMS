@@ -216,7 +216,45 @@ paths:
           description: Server error
           schema:
             $ref: '#/definitions/common.JsonErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create book
+      tags:
+      - Books
+  /books/getAll:
+    get:
+      consumes:
+      - application/json
+      description: Returns a paginated list of books
+      parameters:
+      - default: "1"
+        description: Page number
+        in: query
+        name: page
+        type: string
+      - default: "10"
+        description: Limit
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "401":
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get paginated books
       tags:
       - Books
   /profile/lookup:
