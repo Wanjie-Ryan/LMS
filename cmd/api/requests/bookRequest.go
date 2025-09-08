@@ -10,8 +10,8 @@ type BookRequest struct {
 // struct to update a book
 type UpdateBookRequest struct {
 	ID          uint    `json:"id" validate:"required"`
-	Title       string  `json:"title"`
-	Author      string  `json:"author"`
-	Description *string `json:"description"`
-	Stock       uint    `json:"stock"`
+	Title       *string `json:"title,omitempty"`
+	Author      *string `json:"author,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Stock       *uint   `json:"stock,omitempty"`
 }

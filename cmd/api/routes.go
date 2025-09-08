@@ -22,5 +22,6 @@ func (app *Application) Routes(handler handlers.Handler) {
 	booksRoutes := apiGroup.Group("/books", app.AuthMiddleware.AuthMiddleware)
 	booksRoutes.POST("/create", handler.CreateBookHandler)
 	booksRoutes.GET("/getAll", handler.GetPaginatedBooksHandler)
+	booksRoutes.PATCH("/update", handler.UpdateBookshandler)
 
 }

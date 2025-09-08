@@ -104,7 +104,7 @@ func (b *BooksService) GetPaginatedBooksService(r *http.Request) (*common.Pagina
 
 // update books
 
-func (b *BooksService) UpdateBooksService(payload *requests.UpdateBookRequest) (*models.Book, error) {
+func (b *BooksService) UpdateBooksService(payload *requests.UpdateBookRequest, userId uint) (*models.Book, error) {
 
 	cacheKey := fmt.Sprintf("book:%d", payload.ID)
 
@@ -118,11 +118,26 @@ func (b *BooksService) UpdateBooksService(payload *requests.UpdateBookRequest) (
 		return nil, errors.New("error getting book")
 	}
 
-	books.Title = payload.Title
-	books.Author = payload.Author
-	books.Description = payload.Description
-	books.Stock = payload.Stock
+	if payload.Title != nil {
+		books.Title = *payload.Title
+	}
 
+	if payload.Author != nil {
+		books.Author = *payload.Author
+	}
+
+	if payload.Description != nil {
+		books.Description = payload.Description
+	}
+
+	if payload.Stock != nil {
+		books.Stock = *payload.Stock
+	}
+
+	books.UserID = userId
+	books.UpdatedAt = time.Now()
+
+	// updatedResult := b.DB.Preload("User").Save(&books)
 	updatedResult := b.DB.Save(&books)
 	if updatedResult.Error != nil {
 		log.Default().Println("error updating book in db", updatedResult.Error)

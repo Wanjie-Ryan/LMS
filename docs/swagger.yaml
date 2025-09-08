@@ -92,6 +92,21 @@ definitions:
     x-enum-varnames:
     - RoleAdmin
     - RoleMember
+  requests.UpdateBookRequest:
+    properties:
+      author:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      stock:
+        type: integer
+      title:
+        type: string
+    required:
+    - id
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -255,6 +270,38 @@ paths:
       security:
       - BearerAuth: []
       summary: Get paginated books
+      tags:
+      - Books
+  /books/update:
+    patch:
+      consumes:
+      - application/json
+      description: Updates Books
+      parameters:
+      - description: Update Book payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "401":
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Books
       tags:
       - Books
   /profile/lookup:
