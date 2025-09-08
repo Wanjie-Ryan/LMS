@@ -233,6 +233,6 @@ func (h *Handler) SingleBookHandler(c echo.Context) error {
 // @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
 // @Failure      500  {object}  common.JsonErrorResponse  "Server error"
 // @Router       /books/getsingle [get]
-func (h *Handler) DeleteBookHandler(c echo.Context)error{
+func (h *Handler) DeleteBookHandler(c echo.Context) error {
 	return nil
 }
