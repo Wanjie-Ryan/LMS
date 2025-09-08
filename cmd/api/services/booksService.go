@@ -44,12 +44,14 @@ func (b *BooksService) CreateBooksService(payload *requests.BookRequest, userId 
 		return nil, errors.New("error creating book")
 	}
 
-	// saving the data to Redis
-	booksJson, err := json.Marshal(savedBook)
+	// saving the data to Redis, first refetch the data with the preloaded user
+	var preloadedBook models.Book
+	b.DB.Preload("User").First(&preloadedBook, savedBook.ID)
+	booksJson, err := json.Marshal(preloadedBook)
 	if err != nil {
 		fmt.Println("error marshalling book struct to json", err)
 	} else {
-		err = b.Redis.Set(common.Ctx, fmt.Sprintf("book:%d", savedBook.ID), booksJson, 0).Err()
+		err = b.Redis.Set(common.Ctx, fmt.Sprintf("book:%d", savedBook.ID), booksJson, time.Minute*5).Err()
 
 		if err != nil {
 			log.Default().Println("error saving book to redis", err)
@@ -58,7 +60,7 @@ func (b *BooksService) CreateBooksService(payload *requests.BookRequest, userId 
 		}
 	}
 
-	return savedBook, nil
+	return &preloadedBook, nil
 }
 
 // get all paginated books
@@ -144,11 +146,14 @@ func (b *BooksService) UpdateBooksService(payload *requests.UpdateBookRequest, u
 		return nil, errors.New("error updating book in db")
 	}
 
-	bookJson, err := json.Marshal(books)
+	// saving to redis
+	var preloadedBook models.Book
+	b.DB.Preload("User").First(&preloadedBook, payload.ID)
+	bookJson, err := json.Marshal(preloadedBook)
 	if err != nil {
 		log.Default().Println("error marshalling book struct to json", err)
 	} else {
-		err = b.Redis.Set(common.Ctx, cacheKey, bookJson, 0).Err()
+		err = b.Redis.Set(common.Ctx, cacheKey, bookJson, time.Minute*5).Err()
 		if err != nil {
 			log.Default().Println("error updating book to redis", err)
 		} else {
@@ -158,5 +163,76 @@ func (b *BooksService) UpdateBooksService(payload *requests.UpdateBookRequest, u
 	}
 
 	return &books, nil
+
+}
+
+// get single book
+func (b *BooksService) GetSingleBookService(id uint) (*models.Book, error) {
+
+	var book models.Book
+	cachekey := fmt.Sprintf("book:%d", id)
+
+	// first check redis
+
+	val, err := b.Redis.Get(common.Ctx, cachekey).Result()
+	if err == nil && val != "" {
+		var cachedBook models.Book
+		if jsonErr := json.Unmarshal([]byte(val), &cachedBook); jsonErr == nil {
+			log.Default().Println("book fetched from redis successfully")
+			return &cachedBook, nil
+		} else {
+			log.Default().Println("error unmarshalling book from redis", jsonErr)
+		}
+
+	}
+
+	result := b.DB.Preload("User").First(&book, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		log.Default().Println("error getting book", result.Error)
+		return nil, errors.New("error getting book")
+	}
+
+	bookJson, err := json.Marshal(book)
+	if err != nil {
+		log.Default().Println("error marshalling book struct to json", err)
+	} else {
+		err = b.Redis.Set(common.Ctx, cachekey, bookJson, time.Minute*5).Err()
+		if err != nil {
+			log.Default().Println("error saving book to redis", err)
+		} else {
+			log.Default().Println("book saved to redis successfully")
+		}
+	}
+
+	return &book, nil
+
+}
+
+// delete a book
+
+func (b *BooksService) DeleteBooksService(id uint) error {
+	cachekey := fmt.Sprintf("book:%d", id)
+
+	result := b.DB.Delete(&models.Book{}, id)
+	if result.Error != nil {
+
+		log.Default().Println("error deleting book", result.Error)
+		return errors.New("error deleting book")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("book not found")
+	}
+
+	err := b.Redis.Del(common.Ctx, cachekey).Err()
+
+	if err != nil {
+		log.Default().Println("error deleting book from redis", err)
+	} else {
+		log.Default().Println("book deleted from redis successfully")
+	}
+	return nil
 
 }

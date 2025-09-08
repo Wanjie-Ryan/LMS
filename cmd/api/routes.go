@@ -23,5 +23,6 @@ func (app *Application) Routes(handler handlers.Handler) {
 	booksRoutes.POST("/create", handler.CreateBookHandler)
 	booksRoutes.GET("/getAll", handler.GetPaginatedBooksHandler)
 	booksRoutes.PATCH("/update", handler.UpdateBookshandler)
-
+	booksRoutes.GET("/getsingle", handler.SingleBookHandler)
+	booksRoutes.DELETE("/delete", handler.DeleteBookHandler)
 }

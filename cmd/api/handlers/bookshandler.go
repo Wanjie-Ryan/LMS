@@ -160,3 +160,79 @@ func (h *Handler) UpdateBookshandler(c echo.Context) error {
 
 	return common.SendSuccessResponse(c, "Book updated successfully", books)
 }
+
+// Handler to get single book
+// SingleBookHandler godoc
+// @Summary      Get single Books
+// @Description  Get single book by id in the payload
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        payload  body      requests.GetDelBookRequest  true  "Get Single Book payload"
+// @Success      200  {object}  common.JsonSuccessResponse
+// @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /books/getsingle [get]
+func (h *Handler) SingleBookHandler(c echo.Context) error {
+
+	user, ok := c.Get("user").(*models.User)
+	if !ok {
+
+		return common.SendUnauthorizedResponse(c, "Not authorized")
+	}
+
+	if user.Role != "admin" {
+
+		return common.SendForbiddenResponse(c, "Not allowed to perform this action")
+	}
+
+	payload := new(requests.GetDelBookRequest)
+
+	if err := (&echo.DefaultBinder{}).BindBody(c, payload); err != nil {
+
+		fmt.Println("error binding book payload", err.Error())
+		return common.SendBadRequestResponse(c, "Invalid book payload")
+	}
+
+	validationErr := h.ValidateBodyRequest(c, *payload)
+
+	if validationErr != nil {
+
+		return common.SendFailedValidationResponse(c, validationErr)
+	}
+
+	booksService := services.NewBookService(h.DB, h.Redis)
+
+	books, err := booksService.GetSingleBookService(payload.ID)
+
+	if err != nil {
+		if err.Error() == "error getting book in db" {
+			return common.SendInternalServerError(c, "Error getting book")
+		}
+	}
+	if books == nil {
+		return common.SendNotFoundResponse(c, "Book not found")
+	}
+
+	return common.SendSuccessResponse(c, "Book retrieved successfully", books)
+}
+
+// Handler to delete book
+// DeleteBookHandler godoc
+// @Summary      Get single Books
+// @Description  Get single book by id in the payload
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        payload  body      requests.GetDelBookRequest  true  "Get Single Book payload"
+// @Success      200  {object}  common.JsonSuccessResponse
+// @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /books/getsingle [get]
+func (h *Handler) DeleteBookHandler(c echo.Context) error {
+	return nil
+}
