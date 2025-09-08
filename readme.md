@@ -138,7 +138,7 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 - -g points to the entry file containing the top-level annotations (main.go)
 - This generates a docs/ package
 - Everytime you change annotations or models, **swag init** again
-**swag init --generalInfo cmd/api/main.go --output docs**
+  **swag init --generalInfo cmd/api/main.go --output docs**
 
 # CI/CD Workflow
 
@@ -496,3 +496,8 @@ docker compose restart app
 4. Deployment
 
 - Popular platforms can pull and deploy from hub, so you don't have to upload huge images every time.
+
+# PRELOAD
+
+- Preload("user") tells GORM, when you select from db, also run a join or separate query to fetch the associated User, and populate the user field on the book struct.
+- It **ONLY** affects **SELECT (read) queries**.

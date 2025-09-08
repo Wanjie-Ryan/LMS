@@ -15,3 +15,8 @@ type UpdateBookRequest struct {
 	Description *string `json:"description,omitempty"`
 	Stock       *uint   `json:"stock,omitempty"`
 }
+
+// struct to delete and get by id
+type GetDelBookRequest struct {
+	ID uint `json:"id" validate:"required"`
+}

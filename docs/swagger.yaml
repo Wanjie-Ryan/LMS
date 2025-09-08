@@ -50,6 +50,13 @@ definitions:
     - stock
     - title
     type: object
+  requests.GetDelBookRequest:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
   requests.LoginRequest:
     properties:
       email:
@@ -270,6 +277,38 @@ paths:
       security:
       - BearerAuth: []
       summary: Get paginated books
+      tags:
+      - Books
+  /books/getsingle:
+    get:
+      consumes:
+      - application/json
+      description: Get single book by id in the payload
+      parameters:
+      - description: Get Single Book payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/requests.GetDelBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "401":
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get single Books
       tags:
       - Books
   /books/update:
