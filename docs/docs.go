@@ -258,6 +258,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/books/update": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates Books",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update Books",
+                "parameters": [
+                    {
+                        "description": "Update Book payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.UpdateBookRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/profile/lookup": {
             "get": {
                 "security": [
@@ -440,6 +491,29 @@ const docTemplate = `{
                 "RoleAdmin",
                 "RoleMember"
             ]
+        },
+        "requests.UpdateBookRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {

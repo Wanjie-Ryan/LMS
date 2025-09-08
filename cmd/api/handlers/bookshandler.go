@@ -103,3 +103,60 @@ func (h *Handler) GetPaginatedBooksHandler(c echo.Context) error {
 	return common.SendSuccessResponse(c, "Books retrieved successfully", books)
 
 }
+
+// Handler to update books
+// UpdateBookshandler godoc
+// @Summary      Update Books
+// @Description  Updates Books
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        payload  body      requests.UpdateBookRequest  true  "Update Book payload"
+// @Success      200  {object}  common.JsonSuccessResponse
+// @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /books/update [patch]
+func (h *Handler) UpdateBookshandler(c echo.Context) error {
+
+	user, ok := c.Get("user").(*models.User)
+	if !ok {
+
+		return common.SendUnauthorizedResponse(c, "Not authorized")
+	}
+
+	if user.Role != "admin" {
+
+		return common.SendForbiddenResponse(c, "Not allowed to perform this action")
+	}
+
+	payload := new(requests.UpdateBookRequest)
+
+	if err := (&echo.DefaultBinder{}).BindBody(c, payload); err != nil {
+
+		fmt.Println("error binding book payload", err.Error())
+		return common.SendBadRequestResponse(c, "Invalid book update payload")
+	}
+
+	validationErr := h.ValidateBodyRequest(c, *payload)
+
+	if validationErr != nil {
+		return common.SendFailedValidationResponse(c, validationErr)
+	}
+
+	booksService := services.NewBookService(h.DB, h.Redis)
+
+	books, err := booksService.UpdateBooksService(payload, user.ID)
+
+	if err != nil {
+		if err.Error() == "error updating book in db" {
+			return common.SendInternalServerError(c, "Error updating book")
+		}
+	}
+	if books == nil {
+		return common.SendNotFoundResponse(c, "Book not found")
+	}
+
+	return common.SendSuccessResponse(c, "Book updated successfully", books)
+}

@@ -101,3 +101,62 @@ func (b *BooksService) GetPaginatedBooksService(r *http.Request) (*common.Pagina
 	return pagination, nil
 
 }
+
+// update books
+
+func (b *BooksService) UpdateBooksService(payload *requests.UpdateBookRequest, userId uint) (*models.Book, error) {
+
+	cacheKey := fmt.Sprintf("book:%d", payload.ID)
+
+	var books models.Book
+	result := b.DB.First(&books, payload.ID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		log.Default().Println("error getting book", result.Error)
+		return nil, errors.New("error getting book")
+	}
+
+	if payload.Title != nil {
+		books.Title = *payload.Title
+	}
+
+	if payload.Author != nil {
+		books.Author = *payload.Author
+	}
+
+	if payload.Description != nil {
+		books.Description = payload.Description
+	}
+
+	if payload.Stock != nil {
+		books.Stock = *payload.Stock
+	}
+
+	books.UserID = userId
+	books.UpdatedAt = time.Now()
+
+	// updatedResult := b.DB.Preload("User").Save(&books)
+	updatedResult := b.DB.Save(&books)
+	if updatedResult.Error != nil {
+		log.Default().Println("error updating book in db", updatedResult.Error)
+		return nil, errors.New("error updating book in db")
+	}
+
+	bookJson, err := json.Marshal(books)
+	if err != nil {
+		log.Default().Println("error marshalling book struct to json", err)
+	} else {
+		err = b.Redis.Set(common.Ctx, cacheKey, bookJson, 0).Err()
+		if err != nil {
+			log.Default().Println("error updating book to redis", err)
+		} else {
+			log.Default().Println("book updated to redis successfully")
+		}
+
+	}
+
+	return &books, nil
+
+}
