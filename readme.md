@@ -510,4 +510,4 @@ docker compose restart app
 1. Use a third party middleware
 2. Roll your own using redis.
 
-**go get github.com/labstack/echo-contrib/middleware**
+**go get github.com/labstack/echo/v4/middleware@v4.13.4**
