@@ -273,3 +273,33 @@ func (h *Handler) DeleteBookHandler(c echo.Context) error {
 	return common.SendSuccessResponse(c, "Book deleted successfully", nil)
 
 }
+
+// Handler to search for books
+// SearchBooksHandler godoc
+// @Summary      Search Book
+// @Description  Search book by author or title
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  common.JsonSuccessResponse
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /search [get]
+func (h *Handler) SearchBooksHandler(c echo.Context) error {
+
+	booksService := services.NewBookService(h.DB, h.Redis)
+
+	books, err := booksService.SearchBooksService(c.Request())
+	if err != nil {
+		if err.Error() == "error getting books" {
+			return common.SendInternalServerError(c, "Error getting books")
+		}
+	}
+
+	if books == nil {
+		return common.SendNotFoundResponse(c, "Books not found")
+	}
+
+	return common.SendSuccessResponse(c, "Books retrieved successfully", books)
+
+}

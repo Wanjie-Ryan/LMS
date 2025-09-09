@@ -236,3 +236,29 @@ func (b *BooksService) DeleteBooksService(id uint) error {
 	return nil
 
 }
+
+// search functionality
+
+func (b *BooksService) SearchBooksService(r *http.Request) (*common.Pagination, error) {
+
+	q := r.URL.Query()
+	search := q.Get("search")
+	// fmt.Println("search query value", search)
+	// page := q.Get("page")
+	// limit := q.Get("limit")
+	// cacheKey := fmt.Sprintf("books:page:%s:limit:%s", page, limit)
+	pagination := common.NewPagination(&models.Book{}, r, b.DB)
+
+	var books []models.Book
+	result := b.DB.Preload("User").Scopes(pagination.Paginate()).Order("created_at desc").Where("title LIKE ? OR author LIKE ?", "%"+search+"%", "%"+search+"%").Find(&books)
+	// log.Default().Println("search result", books)
+
+	if result.Error != nil {
+		log.Default().Println("error getting books", result.Error)
+		return nil, errors.New("error getting books")
+	}
+	pagination.Data = books
+
+	return pagination, nil
+
+}
