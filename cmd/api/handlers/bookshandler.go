@@ -219,7 +219,7 @@ func (h *Handler) SingleBookHandler(c echo.Context) error {
 	return common.SendSuccessResponse(c, "Book retrieved successfully", books)
 }
 
-// Handler to delete book
+// Handler to delete books
 // DeleteBookHandler godoc
 // @Summary      Delete Book
 // @Description  Delete book by id in the payload
