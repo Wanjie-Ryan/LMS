@@ -25,4 +25,9 @@ func (app *Application) Routes(handler handlers.Handler) {
 	booksRoutes.PATCH("/update", handler.UpdateBookshandler)
 	booksRoutes.GET("/getsingle", handler.SingleBookHandler)
 	booksRoutes.DELETE("/delete", handler.DeleteBookHandler)
+
+	// public routes
+	publicRoutes := apiGroup.Group("/public")
+	publicRoutes.GET("/search", handler.SearchBooksHandler)
+
 }
