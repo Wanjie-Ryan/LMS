@@ -243,6 +243,38 @@ paths:
       summary: Create book
       tags:
       - Books
+  /books/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete book by id in the payload
+      parameters:
+      - description: Delete Book payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/requests.GetDelBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "401":
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete Book
+      tags:
+      - Books
   /books/getAll:
     get:
       consumes:
