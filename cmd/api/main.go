@@ -33,6 +33,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	echomw "github.com/labstack/echo/v4/middleware" // the echomw is an alias
 	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"github.com/Wanjie-Ryan/LMS/cmd/api/handlers"
@@ -52,6 +53,34 @@ type Application struct {
 func main() {
 
 	e := echo.New()
+
+	// CORS middleware
+
+	e.Use(echomw.CORSWithConfig(echomw.CORSConfig{
+		AllowOrigins: []string{
+			"http://localhost:3000",
+			"http://localhost:3001",
+		},
+		AllowHeaders: []string{
+			echo.HeaderOrigin,
+			echo.HeaderContentType,
+			echo.HeaderAccept,
+			echo.HeaderAuthorization,
+		},
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPatch,
+			http.MethodPut,
+			http.MethodDelete,
+		},
+	}))
+
+	// rate limiter
+	//allows upto 5 requests per second per ip address
+	e.Use(echomw.RateLimiter(
+		echomw.NewRateLimiterMemoryStore(5),
+	))
 
 	err := godotenv.Load()
 	if err != nil {

@@ -501,3 +501,13 @@ docker compose restart app
 
 - Preload("user") tells GORM, when you select from db, also run a join or separate query to fetch the associated User, and populate the user field on the book struct.
 - It **ONLY** affects **SELECT (read) queries**.
+
+# Rate Limiting
+
+- Restricting the number of requests a user can make in a given time window.
+- Two main ways in go
+
+1. Use a third party middleware
+2. Roll your own using redis.
+
+**go get github.com/labstack/echo/v4/middleware@v4.13.4**
