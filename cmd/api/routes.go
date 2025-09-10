@@ -30,4 +30,8 @@ func (app *Application) Routes(handler handlers.Handler) {
 	publicRoutes := apiGroup.Group("/public")
 	publicRoutes.GET("/search", handler.SearchBooksHandler)
 	publicRoutes.GET("/filter", handler.FilterBooksHandler)
+
+	memberRoutes := apiGroup.Group("/member", app.AuthMiddleware.AuthMiddleware)
+	memberRoutes.GET("/books/getAll", handler.GetMemberPaginatedBooksHandler)
+	memberRoutes.POST("/borrow", handler.BorrowHandler)
 }

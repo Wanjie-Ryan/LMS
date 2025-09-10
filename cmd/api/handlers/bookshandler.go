@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"fmt"
-	"log"
+	// "log"
 
 	"github.com/labstack/echo/v4"
 
@@ -82,7 +82,7 @@ func (h *Handler) CreateBookHandler(c echo.Context) error {
 func (h *Handler) GetPaginatedBooksHandler(c echo.Context) error {
 
 	user, ok := c.Get("user").(*models.User)
-	log.Default().Println("admin email is checking", user.Email)
+	// log.Default().Println("admin email is checking", user.Email)
 	if !ok {
 		return common.SendUnauthorizedResponse(c, "Not authorized")
 	}

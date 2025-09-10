@@ -50,6 +50,16 @@ definitions:
     - stock
     - title
     type: object
+  requests.BorrowRequest:
+    properties:
+      book_id:
+        type: integer
+      due_date:
+        type: string
+    required:
+    - book_id
+    - due_date
+    type: object
   requests.GetDelBookRequest:
     properties:
       id:
@@ -279,7 +289,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Returns a paginated list of books
+      description: Returns a paginated list of books for members
       parameters:
       - default: "1"
         description: Page number
@@ -310,7 +320,7 @@ paths:
       - BearerAuth: []
       summary: Get paginated books
       tags:
-      - Books
+      - Borrow Books
   /books/getsingle:
     get:
       consumes:
@@ -375,6 +385,42 @@ paths:
       summary: Update Books
       tags:
       - Books
+  /borrow:
+    post:
+      consumes:
+      - application/json
+      description: Member is able to borrow books
+      parameters:
+      - description: Borrow Book payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/requests.BorrowRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "401":
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Member can borrow books
+      tags:
+      - Borrow Books
   /filter:
     get:
       consumes:
