@@ -260,7 +260,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns a paginated list of books",
+                "description": "Returns a paginated list of books for members",
                 "consumes": [
                     "application/json"
                 ],
@@ -268,7 +268,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Books"
+                    "Borrow Books"
                 ],
                 "summary": "Get paginated books",
                 "parameters": [
@@ -398,6 +398,63 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/borrow": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Member is able to borrow books",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Borrow Books"
+                ],
+                "summary": "Member can borrow books",
+                "parameters": [
+                    {
+                        "description": "Borrow Book payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.BorrowRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/common.JsonErrorResponse"
                         }
@@ -611,6 +668,21 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "requests.BorrowRequest": {
+            "type": "object",
+            "required": [
+                "book_id",
+                "due_date"
+            ],
+            "properties": {
+                "book_id": {
+                    "type": "integer"
+                },
+                "due_date": {
                     "type": "string"
                 }
             }
