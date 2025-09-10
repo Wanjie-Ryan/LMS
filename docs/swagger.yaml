@@ -375,6 +375,36 @@ paths:
       summary: Update Books
       tags:
       - Books
+  /filter:
+    get:
+      consumes:
+      - application/json
+      description: Filter book by date range
+      parameters:
+      - description: Start date in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+        in: query
+        name: start_date
+        required: true
+        type: string
+      - description: End date in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
+        in: query
+        name: end_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      summary: Filter Book
+      tags:
+      - Books
   /profile/lookup:
     get:
       description: Returns the current user's profile
@@ -402,6 +432,31 @@ paths:
       summary: Get profile
       tags:
       - Profile
+  /search:
+    get:
+      consumes:
+      - application/json
+      description: Search book by author or title
+      parameters:
+      - description: Search query for title or author
+        in: query
+        name: search
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      summary: Search Book
+      tags:
+      - Books
 schemes:
 - http
 securityDefinitions:
