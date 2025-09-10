@@ -262,3 +262,36 @@ func (b *BooksService) SearchBooksService(r *http.Request) (*common.Pagination, 
 	return pagination, nil
 
 }
+
+// filter books with dates
+
+func (b *BooksService) FilterBookByDateService(r *http.Request) (*common.Pagination, error) {
+	q := r.URL.Query()
+	start := q.Get("start_date")
+	end := q.Get("end_date")
+	fmt.Println("start date", start, "end date", end)
+
+	if len(start) == 10 {
+		start = start + " 00:00:00"
+	}
+
+	if len(end) == 10 {
+		end = end + " 23:59:59"
+	}
+
+	pagination := common.NewPagination(&models.Book{}, r, b.DB)
+
+	var books []models.Book
+
+	result := b.DB.Preload("User").Scopes(pagination.Paginate()).Order("created_at desc").Where("created_at BETWEEN ? AND ?", start, end).Find(&books)
+
+	log.Default().Println("filtered books", books)
+	if result.Error != nil {
+		log.Default().Println("error getting books", result.Error)
+		return nil, errors.New("error getting books")
+	}
+
+	pagination.Data = books
+
+	return pagination, nil
+}

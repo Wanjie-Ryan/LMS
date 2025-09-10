@@ -281,6 +281,7 @@ func (h *Handler) DeleteBookHandler(c echo.Context) error {
 // @Tags         Books
 // @Accept       json
 // @Produce      json
+// @Param        search  query      string  true  "Search query for title or author"
 // @Success      200  {object}  common.JsonSuccessResponse
 // @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
 // @Failure      500  {object}  common.JsonErrorResponse  "Server error"
@@ -302,4 +303,35 @@ func (h *Handler) SearchBooksHandler(c echo.Context) error {
 
 	return common.SendSuccessResponse(c, "Books retrieved successfully", books)
 
+}
+
+// Handler to filter books by date range
+// FilterBooksHandler godoc
+// @Summary      Filter Book
+// @Description  Filter book by date range
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Param        start_date query string true  "Start date in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS"
+// @Param        end_date   query string true  "End date in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS"
+// @Success      200  {object}  common.JsonSuccessResponse
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /filter [get]
+func (h *Handler) FilterBooksHandler(c echo.Context) error {
+
+	booksService := services.NewBookService(h.DB, h.Redis)
+
+	books, err := booksService.FilterBookByDateService(c.Request())
+	if err != nil {
+		if err.Error() == "error getting books" {
+			return common.SendInternalServerError(c, "Error getting books")
+		}
+	}
+
+	if books == nil {
+		return common.SendNotFoundResponse(c, "Books not found")
+	}
+
+	return common.SendSuccessResponse(c, "Books retrieved successfully", books)
 }

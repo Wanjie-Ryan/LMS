@@ -29,5 +29,5 @@ func (app *Application) Routes(handler handlers.Handler) {
 	// public routes
 	publicRoutes := apiGroup.Group("/public")
 	publicRoutes.GET("/search", handler.SearchBooksHandler)
-
+	publicRoutes.GET("/filter", handler.FilterBooksHandler)
 }
