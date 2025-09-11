@@ -34,4 +34,5 @@ func (app *Application) Routes(handler handlers.Handler) {
 	memberRoutes := apiGroup.Group("/member", app.AuthMiddleware.AuthMiddleware)
 	memberRoutes.GET("/books/getAll", handler.GetMemberPaginatedBooksHandler)
 	memberRoutes.POST("/borrow", handler.BorrowHandler)
+	memberRoutes.POST("/return", handler.ReturnBookHandler)
 }
