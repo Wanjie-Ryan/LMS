@@ -118,3 +118,68 @@ func (h *Handler) BorrowHandler(c echo.Context) error {
 
 	return common.SendCreatedResponse(c, "Book borrowed successfully", borrow)
 }
+
+// handler for user to return book
+// ReturnBookHandler godoc
+// @Summary      Member can Return books
+// @Description  Member is able to Return books
+// @Tags         Return Books
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        payload  body      requests.ReturnRequest  true  "Return Book payload"
+// @Success      200  {object}  common.JsonSuccessResponse
+// @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
+// @Failure      403  {object}  common.JsonErrorResponse  "Forbidden"
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /return [post]
+func (h *Handler) ReturnBookHandler(c echo.Context) error {
+
+	user, ok := c.Get("user").(*models.User)
+
+	if !ok {
+		return common.SendUnauthorizedResponse(c, "Not authorized")
+	}
+
+	if user.Role != "member" {
+		return common.SendForbiddenResponse(c, "Not allowed to perform this action")
+	}
+
+	payload := new(requests.ReturnRequest)
+
+	if err := (&echo.DefaultBinder{}).BindBody(c, payload); err != nil {
+		return common.SendBadRequestResponse(c, "Invalid request payload")
+	}
+
+	validationErr := h.ValidateBodyRequest(c, payload)
+
+	if validationErr != nil {
+		return common.SendFailedValidationResponse(c, validationErr)
+	}
+
+	borrowService := services.NewBorrowService(h.DB, h.Redis)
+
+	borrow, err := borrowService.ReturnBookService(user.ID, payload)
+
+	if err != nil {
+		if err.Error() == "error returning book" {
+			return common.SendInternalServerError(c, "Error returning book")
+		} else if err.Error() == "error getting book" {
+			return common.SendInternalServerError(c, "Error getting book")
+		} else if err.Error() == "error getting user" {
+			return common.SendInternalServerError(c, "Error getting member")
+		} else if err.Error() == "error getting borrow record" {
+			return common.SendInternalServerError(c, "Error getting borrow record")
+		} else {
+			log.Default().Println("error returning book", err)
+			return common.SendInternalServerError(c, "Error returning book")
+		}
+	}
+
+	if borrow == nil {
+		return common.SendNotFoundResponse(c, "Book not found")
+	}
+
+	return common.SendSuccessResponse(c, "Book returned successfully", borrow)
+}

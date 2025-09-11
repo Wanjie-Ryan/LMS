@@ -101,6 +101,13 @@ definitions:
     - lastname
     - password
     type: object
+  requests.ReturnRequest:
+    properties:
+      book_id:
+        type: integer
+    required:
+    - book_id
+    type: object
   requests.Role:
     enum:
     - admin
@@ -478,6 +485,42 @@ paths:
       summary: Get profile
       tags:
       - Profile
+  /return:
+    post:
+      consumes:
+      - application/json
+      description: Member is able to Return books
+      parameters:
+      - description: Return Book payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ReturnRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "401":
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Member can Return books
+      tags:
+      - Return Books
   /search:
     get:
       consumes:

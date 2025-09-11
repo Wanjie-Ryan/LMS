@@ -556,6 +556,63 @@ const docTemplate = `{
                 }
             }
         },
+        "/return": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Member is able to Return books",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Return Books"
+                ],
+                "summary": "Member can Return books",
+                "parameters": [
+                    {
+                        "description": "Return Book payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.ReturnRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "$ref": "#/definitions/common.JsonErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/search": {
             "get": {
                 "description": "Search book by author or title",
@@ -746,6 +803,17 @@ const docTemplate = `{
                             "$ref": "#/definitions/requests.Role"
                         }
                     ]
+                }
+            }
+        },
+        "requests.ReturnRequest": {
+            "type": "object",
+            "required": [
+                "book_id"
+            ],
+            "properties": {
+                "book_id": {
+                    "type": "integer"
                 }
             }
         },

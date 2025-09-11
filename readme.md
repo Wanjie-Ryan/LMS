@@ -511,3 +511,14 @@ docker compose restart app
 2. Roll your own using redis.
 
 **go get github.com/labstack/echo/v4/middleware@v4.13.4**
+
+# Transactions
+
+- Transactions ensure all related operations succeed or fail together.
+- If any step fails, everything is rolledback.
+- If all steps succeed, the transaction is committed.
+- Prevents partial updates
+- Use in cases like:
+
+1. Transferring money
+2. Inventory management
