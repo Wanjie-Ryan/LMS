@@ -216,6 +216,42 @@ paths:
       summary: Register user
       tags:
       - Auth
+  /books/borrowed:
+    get:
+      consumes:
+      - application/json
+      description: Get All borrowed paginated books for admin
+      parameters:
+      - default: "1"
+        description: Page number
+        in: query
+        name: page
+        type: string
+      - default: "10"
+        description: Limit
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JsonSuccessResponse'
+        "401":
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/common.JsonErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get All borrowed paginated books for admin
+      tags:
+      - Books
   /books/create:
     post:
       consumes:
