@@ -302,3 +302,41 @@ func (b *BorrowService) ReturnBookService(userId uint, payload *requests.ReturnR
 
 	return &existingBorrow, nil
 }
+
+// service for member to see all of his borrowed books
+func (b *BorrowService) GetMemberBorrowsService(userId uint, r *http.Request) (*common.Pagination, error) {
+
+	pagination := common.NewPagination(&models.Borrow{}, r, b.DB)
+
+	var borrows []models.Borrow
+	result := b.DB.Preload("User").Preload("Book").Scopes(pagination.Paginate()).Order("created_at desc").Where("user_id = ? AND status = ?", userId, models.StatusBorrowed).Find(&borrows)
+
+	if result.Error != nil {
+		log.Default().Println("error getting books", result.Error)
+		return nil, errors.New("error getting books")
+	}
+
+	pagination.Data = borrows
+
+	return pagination, nil
+
+}
+
+// service for admin to see all members borrowed books
+func (b *BorrowService) GetAllBorrowsService(r *http.Request) (*common.Pagination, error) {
+
+	pagination := common.NewPagination(&models.Borrow{}, r, b.DB)
+
+	var borrows []models.Borrow
+	result := b.DB.Preload("User").Preload("Book").Scopes(pagination.Paginate()).Order("created_at desc").Where("status = ?", models.StatusBorrowed).Find(&borrows)
+
+	if result.Error != nil {
+		log.Default().Println("error getting books", result.Error)
+		return nil, errors.New("error getting books")
+	}
+
+	pagination.Data = borrows
+
+	return pagination, nil
+
+}

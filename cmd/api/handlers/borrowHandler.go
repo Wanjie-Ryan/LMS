@@ -183,3 +183,89 @@ func (h *Handler) ReturnBookHandler(c echo.Context) error {
 
 	return common.SendSuccessResponse(c, "Book returned successfully", borrow)
 }
+
+// handler to get borrowed paginated books for member
+// GetBorrowedPaginatedBooksHandler godoc
+// @Summary      Get member borrowed paginated books
+// @Description  Get member borrowed paginated books
+// @Tags         Borrow Books
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        page  query     string  false  "Page number"  default(1)
+// @Param        limit  query     string  false  "Limit"  default(10)
+// @Success      200  {object}  common.JsonSuccessResponse
+// @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /books/borrowed [get]
+func (h *Handler) GetBorrowedPaginatedBooksHandler(c echo.Context) error {
+
+	user, ok := c.Get("user").(*models.User)
+	if !ok {
+		return common.SendUnauthorizedResponse(c, "Not authorized")
+	}
+
+	if user.Role != "member" {
+		return common.SendForbiddenResponse(c, "Not allowed to perform this action")
+	}
+
+	borrowService := services.NewBorrowService(h.DB, h.Redis)
+
+	borrows, err := borrowService.GetMemberBorrowsService(user.ID, c.Request())
+
+	if err != nil {
+		if err.Error() == "error getting books" {
+			return common.SendInternalServerError(c, "Error getting books")
+		}
+	}
+
+	if borrows == nil {
+		return common.SendNotFoundResponse(c, "Borrows not found")
+	}
+
+	return common.SendSuccessResponse(c, "Borrowed books fetched successfully", borrows)
+}
+
+// handler to get borrowed paginated books for admin
+// GetAllBorrowedPaginatedBooksHandler godoc
+// @Summary      Get All borrowed paginated books for admin
+// @Description  Get All borrowed paginated books for admin
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        page  query     string  false  "Page number"  default(1)
+// @Param        limit  query     string  false  "Limit"  default(10)
+// @Success      200  {object}  common.JsonSuccessResponse
+// @Failure      401  {object}  common.JsonErrorResponse  "Not authorized"
+// @NotFound     404  {object}  common.JsonErrorResponse  "Not found"
+// @Failure      500  {object}  common.JsonErrorResponse  "Server error"
+// @Router       /books/borrowed [get]
+func (h *Handler) GetAllBorrowedPaginatedBooksHandler(c echo.Context) error {
+
+	user, ok := c.Get("user").(*models.User)
+	if !ok {
+		return common.SendUnauthorizedResponse(c, "Not authorized")
+	}
+
+	if user.Role != "admin" {
+		return common.SendForbiddenResponse(c, "Not allowed to perform this action")
+	}
+
+	borrowService := services.NewBorrowService(h.DB, h.Redis)
+
+	borrows, err := borrowService.GetAllBorrowsService(c.Request())
+
+	if err != nil {
+		if err.Error() == "error getting books" {
+			return common.SendInternalServerError(c, "Error getting books")
+		}
+	}
+
+	if borrows == nil {
+		return common.SendNotFoundResponse(c, "Borrows not found")
+	}
+
+	return common.SendSuccessResponse(c, "Borrowed books fetched successfully", borrows)
+}
