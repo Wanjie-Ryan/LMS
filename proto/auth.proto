@@ -1,0 +1,9 @@
+syntax = "proto3";
+option go_package = "github.com/Wanjie-Ryan/LMS/genproto/auth";
+package auth;
+
+enum Role {
+    UNKNOWN = 0;
+    ADMIN = 1;
+    MEMBER = 2;
+}
