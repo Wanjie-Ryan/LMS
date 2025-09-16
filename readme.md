@@ -547,3 +547,9 @@ docker compose restart app
 
 - Think of gRPC like a DTO to expose to the Public
 - gRPC and REST can co-exist, REST receives **JSON** via echo, gRPC receives **Protobuf** via gRPC
+
+# GoRoutine
+
+- Go's lightweight thread managed by the Go runtime.
+- Start one using the go keyword.
+- It runs concurrently and its non-blocking.
