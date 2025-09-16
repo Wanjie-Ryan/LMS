@@ -24,13 +24,15 @@ func StartGRPCServer() {
 	grpcHandler := &handlers.GrpcAuthHandler{Service: authService}
 
 	lis, err := net.Listen("tcp", ":50051")
-	if err !=nil{
+	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
 	// pb.RegisterAuthServiceServer(grpcServer, grpcHandler)
+	// this line registers all methods implemented on the GrpcAuthHandler
 	auth.RegisterAuthServiceServer(grpcServer, grpcHandler)
+
 	log.Default().Println("gRPC server running on port 50051")
 	grpcServer.Serve(lis)
 
