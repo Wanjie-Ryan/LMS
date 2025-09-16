@@ -30,7 +30,7 @@ func StartGRPCServer() {
 
 	grpcServer := grpc.NewServer()
 	// pb.RegisterAuthServiceServer(grpcServer, grpcHandler)
-	// this line registers all methods implemented on the GrpcAuthHandler
+	// this line registers all methods implemented on the GrpcAuthHandler.
 	auth.RegisterAuthServiceServer(grpcServer, grpcHandler)
 
 	log.Default().Println("gRPC server running on port 50051")
