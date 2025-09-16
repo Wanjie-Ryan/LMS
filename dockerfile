@@ -34,6 +34,6 @@ COPY --from=builder /app/lms-server .
 
 # Expose the port your app runs on
 EXPOSE 8080
-
+EXPOSE 50051
 # Start the server
 CMD ["./lms-server"]
