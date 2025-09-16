@@ -1,0 +1,51 @@
+syntax = "proto3";
+option go_package = "github.com/Wanjie-Ryan/LMS/genproto/auth";
+package auth;
+
+// protobuf enums must start at 0
+enum Role {
+    UNKNOWN = 0;
+    ADMIN = 1;
+    MEMBER = 2;
+}
+
+// request sent from client to register
+message RegisterRequest{
+    string firstname = 1;
+    string lastname =2;
+    string email =3;
+    string password =4;
+    Role role = 5;
+}
+
+//Request sent from client to login
+message LoginRequest{
+    string email =1;
+    string password =2;
+}
+
+// Response structure to send back user and the tokens
+message UserView{
+    uint64 id = 1;
+    string firstname =2;
+    string lastname =3;
+    string email =4;
+    string role =5;
+}
+
+message RegisterResponse {
+    string message =1;
+    UserView user =2;
+}
+
+message LoginResponse{
+    string access_token =1;
+    string refresh_token =2;
+    UserView user =3;
+    string message = 4;
+}
+
+service AuthService{
+    rpc Register (RegisterRequest) returns (RegisterResponse);
+    rpc Login (LoginRequest) returns (LoginResponse);
+}

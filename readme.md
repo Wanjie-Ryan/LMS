@@ -544,3 +544,12 @@ docker compose restart app
 - You don't manually write code to handle requests and responses; the gRPC tools generate a lot of that.
 
 - Protocol buffers compiler (protoc) converts .proto files to code.
+
+- Think of gRPC like a DTO to expose to the Public
+- gRPC and REST can co-exist, REST receives **JSON** via echo, gRPC receives **Protobuf** via gRPC
+
+# GoRoutine
+
+- Go's lightweight thread managed by the Go runtime.
+- Start one using the go keyword.
+- It runs concurrently and its non-blocking.

@@ -124,6 +124,8 @@ func main() {
 	port := os.Getenv("APP_PORT")
 	appAddress := fmt.Sprintf(":%s", port)
 	fmt.Println("Server is running on port:", port)
+	go StartGRPCServer()
 	e.Logger.Fatal(e.Start(appAddress))
+	// running grpc in a gorouting, n=ensures both servers run in parallel
 
 }
