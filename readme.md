@@ -554,10 +554,12 @@ docker compose restart app
 - Start one using the go keyword.
 - It runs concurrently and its non-blocking.
 
-# K8S 
+# K8S
+
 - Open-source container orchestration platform.
 - It automates deployment, scaling, and management of containerized apps.
 - it replaces manual docker run or docker compose steps and provides:
+
 1. Deployment - Auto runs, restarts, and upgrades your app containers.
 2. Scaling - Auto-scales your app up/down depending on traffic.
 3. Self-healing - Restarts crashed containers automatically.
@@ -567,3 +569,38 @@ docker compose restart app
 7. Config management - Manages env vars, secrets, volumes.
 
 ![alt text](k8.png)
+
+# K8S components
+
+1. Node - A VM or physical machine that runs containers.
+2. Pod - Smallest unit in k8s - runs one or more containers
+3. Deployment - Declares how many pods you want, how to update them, etc...
+4. Service - Gives a stable IP/DNS name to a pod group
+5. Ingress - Routes HTTP requests to services
+6. ConfigMap -Manages app configs like .env
+7. Secret - Stores passwords, tokens securely.
+8. volumes - persistent data (for mysql)
+
+# Needed deployment files
+
+1. deployment.yaml
+
+- Deploys app container as a pod, handles scaling.
+
+2. service.yaml
+
+- Exposes the pod to internal/external traffic
+
+3. mysql-deployment.yaml + mysql-service.yaml
+4. redis-deployment.yaml + redis-service.yaml
+5. ingress.yaml
+
+- Routes /api to your BE, or uses a domain
+
+6. configmap.yaml
+
+- Inject .env config into pods
+
+7. secret.yaml
+
+- Inject DB password securely.
