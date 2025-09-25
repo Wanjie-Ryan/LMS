@@ -553,3 +553,5 @@ docker compose restart app
 - Go's lightweight thread managed by the Go runtime.
 - Start one using the go keyword.
 - It runs concurrently and its non-blocking.
+
+# K8S 
