@@ -8,6 +8,7 @@ services:
   # build.context is the path to the Dockerfile, which the . means it lies in the current folder.
   # maps port 8080 on local machine to port 8080 on the container
   # that means if your app inside the docker listens on port 8080, you can access it from http://localhost:8080
+  # volume is a persistent data store for containers
   app:
     build:
       context: .
