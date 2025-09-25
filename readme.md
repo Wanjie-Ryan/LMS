@@ -555,3 +555,15 @@ docker compose restart app
 - It runs concurrently and its non-blocking.
 
 # K8S 
+- Open-source container orchestration platform.
+- It automates deployment, scaling, and management of containerized apps.
+- it replaces manual docker run or docker compose steps and provides:
+1. Deployment - Auto runs, restarts, and upgrades your app containers.
+2. Scaling - Auto-scales your app up/down depending on traffic.
+3. Self-healing - Restarts crashed containers automatically.
+4. Service discovery - Exposes your app with DNS names
+5. Load Balancing - Distributes requests across pods.
+6. Ingress - Routes traffic from outside the cluster
+7. Config management - Manages env vars, secrets, volumes.
+
+![alt text](k8.png)
