@@ -604,3 +604,24 @@ docker compose restart app
 7. secret.yaml
 
 - Inject DB password securely.
+
+**Horizontal Pod Auto Scaler (HPA)**
+
+- Scales the pods depending on traffic.
+
+# STEPS
+
+1. minikube start
+2. kubectl get nodes
+3. in the k8s folder
+
+- kubectl apply -f k8s/lms-deployment.yaml
+- kubectl apply -f k8s/lms-service.yaml
+
+4. kubectl get pods
+5. kubectl logs deployment/lms-deployment
+6. Access the app in browser
+
+- minikube service lms-service
+
+7. minikube dashboard

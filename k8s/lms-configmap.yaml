@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lms-configmap
+data:
+  .env: |
+    APP_PORT=8080
+    APP_NAME=lms
+    DB_NAME=lms
+    DB_HOST=mysql:3306
+    DB_USERNAME=root
+    DB_PASSWORD=1234567890
+    JWT_SECRET=2kkmulqkir1zus39bemrvxcqhfj4847483skalaacbaldj474kdhh
+    REDIS_ADDR=redis:6379
