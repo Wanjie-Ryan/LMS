@@ -631,3 +631,6 @@ docker compose restart app
 11. kubectl describe pod mysql-bbf469bf5-sjfrk
 12. kubectl delete deployment mysql
 13. kubectl get svc
+14. kubectl exec -it mysql-5f57464cb-bl8ng -- sh
+15. kubectl exec -it <redis-pod-name> -- redis-cli
+
