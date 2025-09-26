@@ -625,3 +625,9 @@ docker compose restart app
 - minikube service lms-service
 
 7. minikube dashboard
+8. kubectl rollout restart deployment lms-deployment
+9. kubectl get pods -o wide
+10. kubectl logs -f mysql-bbf469bf5-sjfrk
+11. kubectl describe pod mysql-bbf469bf5-sjfrk
+12. kubectl delete deployment mysql
+13. kubectl get svc
