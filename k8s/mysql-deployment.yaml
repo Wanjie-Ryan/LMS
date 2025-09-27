@@ -1,0 +1,52 @@
+#  volume is a way to store data used by containers
+# k8s volumes solves one big problem
+# - By default when a container dies, everything in its filesystem is lost
+# volume is like saying, k8s, give me a special folder where i can save files, and don't delete it just because the container restarted
+# volumes - Declares what kind of storage to use (temp, file, PVC)
+# volumeMounts - says where in the container that volume should be mounted
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8
+        ports:
+        - containerPort: 3306
+        resources:
+          requests:
+            memory: "512Mi" # needs at least 128 MB of memory to start
+            cpu: "250m" # needs 0.1 CPU core minimum
+          limits:
+            memory: "1Gi" # if it goes beyond this, it will be throttled or killed
+            cpu: "500m" # can only use upto 0.25 CPU cores
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "1234567890"
+        - name: MYSQL_DATABASE
+          value: "lms"
+        volumeMounts:
+        #  Inside the MySQL container, mount a volume named mysql-data into the path /var/lib/mysql, this is where MySQL stores its data
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-data
+        emptyDir: {}
+        # create a temporary empty directory that lives as long as the pod lives. Use it for mysql-data volume
+        # emptyDir is the simplest kind of volume:
+        # 1. it gives you an empty folder
+        # 2. it disappears when pod is deleted
+        # 3. it is not persistent

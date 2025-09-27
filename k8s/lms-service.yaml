@@ -1,0 +1,37 @@
+# think of service as the internal or external IP address or (DNS name) to access your pods.
+# when you create a deployment, it spins up pods, and each pod:
+# 1. has its own internal IP
+# 2. Can restart or change IP at any time
+
+# so if you don't have a service:
+# 1. you can't reliably talk to the pod.
+# 2. Other pods can't find it.
+# 3. you can't acess it via browser.
+
+# so you create a service, which:
+# 1. connects to pods using selector
+# 2. Load balances across multiple pods
+# 3. Stays stable, even if pods come and go
+# 4. Exposes the app (inside or outside the cluster)
+
+# we're using the core API group (v1) for services
+apiVersion: v1
+kind: Service # tells k8s to create a service object (not deployment or pod)
+metadata:
+  # this is the DNS name other pods will use to talk to your app (lms-service)
+  name: lms-service
+  labels:
+    # useful for grouping and selecting in other files
+    app: lms
+spec:
+  selector:
+    # tells the service to route traffic to all pods that have app:lms in their labels
+    app: lms # This MUST match the label on your pods, connects the pod to this
+  ports:
+  - name: http
+    port: 80 # Port that the service exposes inside the cluster
+    targetPort: 8080 # Port exposed by the container to which traffic will be forwarded
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+  type: NodePort # Expose this service outside the cluster (e.g., via Minikube)
