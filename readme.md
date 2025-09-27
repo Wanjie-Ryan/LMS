@@ -634,3 +634,31 @@ docker compose restart app
 14. kubectl exec -it mysql-5f57464cb-bl8ng -- sh
 15. kubectl exec -it <redis-pod-name> -- redis-cli
 
+**EmptyDir {} VS Persistent Volume Claims(PVC)**
+
+- EmptyDir volumes is that the storage is ephemral - it's tied to the pod lifecycle
+- If the pod crashes or restarts, all data is lost.
+
+- PVC - connects your pod to an external or managed volume
+- The pod can die and respawn, but your DB files remain intact.
+
+**Difference btn Minikube and Rancher**
+
+- Local cluster only, manages multiple clusters
+- Beginner friendly, More advanced.
+- Testing, Prod grade
+
+**Horizontal Pod Autoscaler**
+
+- Auto increases/decreases the number of pods in deployment based on CPU or metrics
+
+**Enable metrics server**
+
+- minikube addons enable metrics-server
+- kubectl autoscale deployment lms-deployment --cpu-percent=50 --min=1 --max=3
+
+- if CPU goes above 50%, K8S may scale upto 3 pods.
+- When CPU is low, scale back down to 1
+
+- kubectl get hpa
+- check HPA status
