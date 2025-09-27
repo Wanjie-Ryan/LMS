@@ -1,0 +1,80 @@
+# Deployment file Declares how you want your app to run. K8S then works to make that true.
+# its the source of truth for how the app should be managed.
+# This file tells Kubernetes to run your LMS Go application
+# It defines how many replicas (pods), what image to pull, ports, and environment variables
+
+apiVersion: apps/v1 # This is the version of the K8s API to use for deployments
+kind: Deployment # This tells K8s what kind of object this is (a Deployment)
+# its like telling k8s "I want to create a deployment resource"
+# A deployment is a controller that manages pods for you.
+metadata:
+  # metadata.name is the name of the deployment object in the cluster
+  name: lms-deployment
+  labels:
+    # labels, key-value metadata used to group, filter and match things
+    # you'll use the app:lms label elsewhere, eg. in the service
+    app: lms
+spec:
+  # spec defines the desired state of the deployment
+  replicas: 1 # How many pods to start (1 pod = 1 container here)
+  selector:
+    # tells the deployment, which pods to manage
+    # it will look for pods that have app:lms in their metadata, this is how it connects the deployment to the pods it should control
+    matchLabels:
+      app: lms
+  template:
+    # template for creating pods, any pod created by this deployment will have app:lms label
+    metadata:
+      labels:
+        app: lms
+    spec:
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox
+        command: [ 'sh', '-c', 'until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done;' ]
+      - name: wait-for-redis
+        image: busybox
+        command: [ 'sh', '-c', 'until nc -z redis 6379; do echo waiting for redis; sleep 2; done;' ]
+
+      containers:
+      # list of containers to run in the pod
+      - name: lms
+        # name of the container
+        image: ryanwanjie266/lms:latest # Docker image from Docker Hub
+        ports:
+        - containerPort: 8080 # HTTP port
+        - containerPort: 50051 # gRPC port
+        # tell k8s that these ports are available inside the container
+
+        resources:
+          requests:
+            memory: "128Mi" # needs at least 128 MB of memory to start
+            cpu: "100m" # needs 0.1 CPU core minimum
+          limits:
+            memory: "256Mi" # if it goes beyond this, it will be throttled or killed
+            cpu: "250m" # can only use upto 0.25 CPU cores
+        env:
+        - name: APP_PORT
+          value: "8080"
+        - name: APP_NAME
+          value: "lms"
+        - name: DB_NAME
+          value: "lms"
+        - name: DB_HOST
+          value: "mysql:3306"
+        - name: DB_USERNAME
+          value: "root"
+        - name: DB_PASSWORD
+          value: "1234567890"
+        - name: JWT_SECRET
+          value: "2kkmulqkir1zus39bemrvxcqhfj4847483skalaacbaldj474kdhh"
+        - name: REDIS_ADDR
+          value: "redis:6379"
+        volumeMounts:
+        - name: env-volume
+          mountPath: /app/.env
+          subPath: .env
+      volumes:
+      - name: env-volume
+        configMap:
+          name: lms-configmap

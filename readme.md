@@ -554,4 +554,111 @@ docker compose restart app
 - Start one using the go keyword.
 - It runs concurrently and its non-blocking.
 
-# K8S 
+# K8S
+
+- Open-source container orchestration platform.
+- It automates deployment, scaling, and management of containerized apps.
+- it replaces manual docker run or docker compose steps and provides:
+
+1. Deployment - Auto runs, restarts, and upgrades your app containers.
+2. Scaling - Auto-scales your app up/down depending on traffic.
+3. Self-healing - Restarts crashed containers automatically.
+4. Service discovery - Exposes your app with DNS names
+5. Load Balancing - Distributes requests across pods.
+6. Ingress - Routes traffic from outside the cluster
+7. Config management - Manages env vars, secrets, volumes.
+
+![alt text](k8.png)
+
+# K8S components
+
+1. Node - A VM or physical machine that runs containers.
+2. Pod - Smallest unit in k8s - runs one or more containers
+3. Deployment - Declares how many pods you want, how to update them, etc...
+4. Service - Gives a stable IP/DNS name to a pod group
+5. Ingress - Routes HTTP requests to services
+6. ConfigMap -Manages app configs like .env
+7. Secret - Stores passwords, tokens securely.
+8. volumes - persistent data (for mysql)
+
+# Needed deployment files
+
+1. deployment.yaml
+
+- Deploys app container as a pod, handles scaling.
+
+2. service.yaml
+
+- Exposes the pod to internal/external traffic
+
+3. mysql-deployment.yaml + mysql-service.yaml
+4. redis-deployment.yaml + redis-service.yaml
+5. ingress.yaml
+
+- Routes /api to your BE, or uses a domain
+
+6. configmap.yaml
+
+- Inject .env config into pods
+
+7. secret.yaml
+
+- Inject DB password securely.
+
+**Horizontal Pod Auto Scaler (HPA)**
+
+- Scales the pods depending on traffic.
+
+# STEPS
+
+1. minikube start
+2. kubectl get nodes
+3. in the k8s folder
+
+- kubectl apply -f k8s/lms-deployment.yaml
+- kubectl apply -f k8s/lms-service.yaml
+
+4. kubectl get pods
+5. kubectl logs deployment/lms-deployment
+6. Access the app in browser
+
+- minikube service lms-service
+
+7. minikube dashboard
+8. kubectl rollout restart deployment lms-deployment
+9. kubectl get pods -o wide
+10. kubectl logs -f mysql-bbf469bf5-sjfrk
+11. kubectl describe pod mysql-bbf469bf5-sjfrk
+12. kubectl delete deployment mysql
+13. kubectl get svc
+14. kubectl exec -it mysql-5f57464cb-bl8ng -- sh
+15. kubectl exec -it <redis-pod-name> -- redis-cli
+
+**EmptyDir {} VS Persistent Volume Claims(PVC)**
+
+- EmptyDir volumes is that the storage is ephemral - it's tied to the pod lifecycle
+- If the pod crashes or restarts, all data is lost.
+
+- PVC - connects your pod to an external or managed volume
+- The pod can die and respawn, but your DB files remain intact.
+
+**Difference btn Minikube and Rancher**
+
+- Local cluster only, manages multiple clusters
+- Beginner friendly, More advanced.
+- Testing, Prod grade
+
+**Horizontal Pod Autoscaler**
+
+- Auto increases/decreases the number of pods in deployment based on CPU or metrics
+
+**Enable metrics server**
+
+- minikube addons enable metrics-server
+- kubectl autoscale deployment lms-deployment --cpu-percent=50 --min=1 --max=3
+
+- if CPU goes above 50%, K8S may scale upto 3 pods.
+- When CPU is low, scale back down to 1
+
+- kubectl get hpa
+- check HPA status
