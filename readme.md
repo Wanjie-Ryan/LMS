@@ -12,7 +12,7 @@ Borrows -> id, user_id (who borrowed -> fk to users), book_id (which book was bo
 
 # Admin
 
-- manages books, monitors users, and updates stock
+-- manages books, monitors users, and updates stock
 
 # Normal user
 
